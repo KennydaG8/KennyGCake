@@ -1,0 +1,239 @@
+/* --- 全域設定與字體 --- */
+body {
+    font-family: 'Noto Sans TC', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f8f8;
+    color: #333;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+h1, h2, h3, h4 {
+    font-weight: 700;
+    color: #FF7F50; /* 核心品牌色：鮭魚橘/珊瑚色 */
+}
+
+/* --- 頂部導航列 (Header) --- */
+header {
+    background-color: #333;
+    color: white;
+    padding: 10px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header h1 {
+    color: white;
+    float: left;
+    margin: 0;
+    font-size: 24px;
+}
+
+header nav ul {
+    float: right;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+header nav ul li {
+    display: inline;
+    margin-left: 20px;
+}
+
+header nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: 400;
+    transition: color 0.3s;
+}
+
+header nav ul li a:hover {
+    color: #FFD700; /* 金色，強調科技感 */
+}
+
+/* 清除浮動 */
+header .container::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* --- 橫幅區塊 (Hero) --- */
+.hero-section {
+    background: linear-gradient(135deg, #FFDAB9, #FF7F50); /* 柔和漸變 */
+    color: white;
+    text-align: center;
+    padding: 100px 0;
+}
+
+.hero-section h2 {
+    font-size: 48px;
+    margin-bottom: 15px;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.hero-section p {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+/* CTA 按鈕 */
+.cta-button {
+    display: inline-block;
+    background-color: #4CAF50; /* 綠色，強調行動 */
+    color: white;
+    padding: 12px 25px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 700;
+    transition: background-color 0.3s;
+}
+
+.cta-button:hover {
+    background-color: #45a049;
+}
+
+.secondary-button {
+    background-color: #FFA500; /* 橘色，強調次要行動 */
+    margin-top: 15px;
+}
+
+.secondary-button:hover {
+    background-color: #cc8400;
+}
+
+/* --- 區塊樣式 --- */
+section {
+    padding: 60px 0;
+    text-align: center;
+}
+
+section h3 {
+    font-size: 36px;
+    margin-bottom: 40px;
+}
+
+/* 關於我們 */
+.about-section {
+    background-color: white;
+}
+
+.founder-bio {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.profile-photo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #FF7F50;
+    margin-bottom: 15px;
+}
+
+/* 產品特色 */
+.product-section {
+    background-color: #f0f0f0;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.features-grid div {
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.features-grid h4 {
+    color: #007bff; /* 藍色，強調技術與精準 */
+    margin-top: 0;
+}
+
+.product-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* 品牌新聞 */
+.news-section {
+    background-color: white;
+}
+
+.news-item {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    text-align: left;
+}
+
+.news-item h4 {
+    color: #FF7F50;
+    margin-top: 0;
+}
+
+.news-item a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+/* 合作洽詢 */
+.contact-section {
+    background-color: #333;
+    color: white;
+}
+
+.contact-section h3, .contact-section p {
+    color: white;
+}
+
+/* 底部 */
+footer {
+    background-color: #222;
+    color: #aaa;
+    padding: 20px 0;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* --- 響應式設計 (RWD) --- */
+@media (max-width: 768px) {
+    .hero-section h2 {
+        font-size: 36px;
+    }
+
+    header h1, header nav ul {
+        float: none;
+        text-align: center;
+    }
+
+    header nav ul li {
+        margin: 0 10px;
+    }
+}
