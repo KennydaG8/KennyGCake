@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>肯尼雞蛋糕 - 網誌內容產生器</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; padding: 40px; background: #f4f4f4; }
+        .admin-container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: #e67e22; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        label { display: block; margin: 15px 0 5px; font-weight: bold; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { background: #e67e22; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; margin-top: 20px; font-size: 16px; }
+        button:hover { background: #d35400; }
+        #output-area { margin-top: 30px; display: none; }
+        pre { background: #2c3e50; color: #ecf0f1; padding: 20px; border-radius: 8px; overflow-x: auto; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+
+<div class="admin-container">
+    <h2>📝 肯尼雞蛋糕 - SEO 文章產生器</h2>
+    
+    <label>文章標題 (SEO Title)</label>
+    <input type="text" id="post-title" placeholder="例如：2026 創業首選：自動雞蛋糕機優勢">
+
+    <label>文章關鍵字 (Keywords, 用逗號隔開)</label>
+    <input type="text" id="post-keywords" placeholder="自動雞蛋糕機, 創業加盟, 桃園中壢">
+
+    <label>文章描述 (Description - 顯示在 Google 搜尋結果的小字)</label>
+    <textarea id="post-desc" rows="2" placeholder="簡短介紹這篇文章的內容..."></textarea>
+
+    <label>內文 (支援 HTML 標籤，如 &lt;h2&gt;, &lt;p&gt;)</label>
+    <textarea id="post-content" rows="10" placeholder="請輸入文章內容..."></textarea>
+
+    <button onclick="generateHTML()">生成 HTML 代碼</button>
+
+    <div id="output-area">
+        <h3>✅ 生成成功！請複製以下代碼並存為 .html 檔案：</h3>
+        <p>建議檔名：<span id="suggest-filename" style="color:blue; font-weight:bold;"></span></p>
+        <pre id="html-output"></pre>
+    </div>
+</div>
+
+<script>
+function generateHTML() {
+    const title = document.getElementById('post-title').value;
+    const keywords = document.getElementById('post-keywords').value;
+    const desc = document.getElementById('post-desc').value;
+    const content = document.getElementById('post-content').value;
+    const date = new Date().toISOString().split('T')[0];
+
+    // 生成代碼模板
+    const template = `<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>${title} | 肯尼雞蛋糕</title>
+    <meta name="description" content="${desc}">
+    <meta name="keywords" content="${keywords}">
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        .article-content { max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.8; color: #333; }
+        .article-content h2 { color: #e67e22; border-left: 5px solid #e67e22; padding-left: 15px; margin-top: 30px; }
+        .back-home { display: inline-block; margin-bottom: 20px; color: #666; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>[肯尼雞蛋糕] - 創業專欄</h1>
+            <nav><ul><li><a href="../index.html">回到首頁</a></li></ul></nav>
+        </div>
+    </header>
+
+    <main class="article-content">
+        <a href="../index.html" class="back-home">← 回到首頁</a>
+        <h1>${title}</h1>
+        <p>更新日期：${date} | 作者：Kenny Huang</p>
+        <hr>
+        
+        <div class="entry-content">
+            ${content}
+        </div>
+        
+        <div style="background: #fff3e0; padding: 20px; border-radius: 10px; margin-top: 50px;">
+            <h4>對自動化設備感興趣嗎？</h4>
+            <p>電話：0986-994952 | 地址：桃園市中壢區延平路500號10樓之4</p>
+            <a href="../index.html#contact" class="cta-button">聯繫我們</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 [肯尼雞蛋糕]. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>`;
+
+    document.getElementById('html-output').textContent = template;
+    document.getElementById('suggest-filename').textContent = "blog-post-" + Date.now() + ".html";
+    document.getElementById('output-area').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
