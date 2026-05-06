@@ -4,25 +4,63 @@
   <meta charset="utf-8"/>
   <meta content="MwfHN48eFENDqxTGbpPsDMJ3W67G6Hs86tbyZ3xzJ8o" name="google-site-verification"/>
   <title>
-   自動雞蛋糕機 | AI智慧輕創業首選 - [肯尼雞蛋糕] (2026 最新技術)
+    自動雞蛋糕機 | AI智慧輕創業首選 - [肯尼雞蛋糕] (2026 最新技術)
   </title>
   <meta content="[肯尼雞蛋糕] 專注於AI驅動的自動雞蛋糕解決方案。2026年最新自動化技術，低成本、高效率，開啟您的智慧輕創業加盟之路。" name="description"/>
   <meta content="自動雞蛋糕機, AI自動化, 輕創業加盟, 智慧設備, 餐飲科技, 無人商店, 肯尼雞蛋糕" name="keywords">
    <link href="style.css" rel="stylesheet"/>
    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&amp;display=swap" rel="stylesheet"/>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+   <style>
+     /* 方形輪播圖樣式 */
+     .image-slider { 
+        position: relative; 
+        width: 100%; 
+        aspect-ratio: 1 / 1; /* 強制設定為正方形 */
+        overflow: hidden; 
+        border-radius: 10px; 
+        margin-bottom: 15px; 
+        background-color: #f0f0f0;
+     }
+     .image-slider img { 
+        width: 100%; 
+        height: 100%; 
+        object-fit: cover; /* 確保圖片縮放填滿方形且不變形 */
+        display: none; 
+     }
+     .image-slider img.active { 
+        display: block; 
+     }
+     .slider-btn { 
+        position: absolute; 
+        top: 50%; 
+        transform: translateY(-50%); 
+        background: rgba(0,0,0,0.3); 
+        color: white; 
+        border: none; 
+        padding: 8px 10px; 
+        cursor: pointer; 
+        border-radius: 50%; 
+        font-size: 14px; 
+        z-index: 10;
+        transition: background 0.3s;
+     }
+     .slider-btn:hover { background: rgba(0,0,0,0.6); }
+     .btn-prev { left: 10px; }
+     .btn-next { right: 10px; }
+   </style>
  </head>
  <body>
   <header>
    <div class="container">
-    <h1>
-     [肯尼雞蛋糕]
-    </h1>
+    <h1>[肯尼雞蛋糕]</h1>
     <nav>
      <ul>
       <li><a href="#about">關於我們</a></li>
       <li><a href="#product">產品特色</a></li>
+      <li><a href="#b2c-cakes">線上預購</a></li>
       <li><a href="#news">品牌新聞</a></li>
-      <li><a href="#contact">合作洽詢</a></li> 
+      <li><a href="#contact">合作洽詢</a></li>
      </ul>
     </nav>
    </div>
@@ -30,15 +68,9 @@
 
   <section class="hero-section" id="hero">
    <div class="container">
-    <h2 class="animate-in">
-     🤖 科技賦能，開啟您的 2026 智慧輕食事業 🚀
-    </h2>
-    <p>
-     我們的自動雞蛋糕機，結合 AI 精準控制與高效出餐，讓您以最低人力成本，打造高品質、高效率的餐飲新模式！
-    </p>
-    <a class="cta-button" href="#product">
-     立即了解機器優勢
-    </a>
+    <h2 class="animate-in">🤖 科技賦能，開啟您的 2026 智慧輕食事業 🚀</h2>
+    <p>我們的自動雞蛋糕機，結合 AI 精準控制與高效出餐，讓您以最低人力成本，打造高品質、高效率的餐飲新模式！</p>
+    <a class="cta-button" href="#product">立即了解機器優勢</a>
    </div>
   </section>
 
@@ -48,13 +80,8 @@
     <div class="founder-bio">
      <img alt="創始人 Kenny Huang 專注於AI自動化" class="profile-photo" src="images/founder-photo.png"/>
      <h4>創始人：Kenny Huang</h4>
-     <p>
-      <strong>專注 AI 自動化實踐者。</strong>
-      Kenny Huang 先生曾任職於頂尖科技公司 AI 部門，將數據科學和機器學習邏輯導入傳統餐飲業。
-     </p>
-     <p>
-      我們的理念是：透過自動智慧系統，將複雜的製作流程標準化，讓人力更專注於服務與營銷，實現真正的**輕量級高效率創業**。
-     </p>
+     <p><strong>專注 AI 自動化實踐者。</strong> Kenny Huang 先生曾任職於頂尖科技公司 AI 部門，將數據科學和機器學習邏輯導入傳統餐飲業。</p>
+     <p>我們的理念是：透過自動智慧系統，將複雜的製作流程標準化，實現真正的輕量級高效率創業。</p>
     </div>
    </div>
   </section>
@@ -62,57 +89,89 @@
   <section class="product-section" id="product">
    <div class="container">
     <h3>📈 產品特色：自動，全優勢！</h3>
-    
-    <!-- 嵌入 YouTube Shorts 影片 -->
     <div class="video-container" style="max-width: 315px; margin: 30px auto; text-align: center;">
-        <h4 style="margin-bottom: 15px; color: #e67e22;">🎬 2026 實機運作流程展示</h4>
+        <h4 style="margin-bottom: 15px; color: #e67e22;">🎬 2026 實機運轉流程展示</h4>
         <div class="iframe-wrapper" style="position: relative; padding-bottom: 177.77%; height: 0; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-radius: 15px;">
-            <iframe 
-                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
-                src="https://www.youtube.com/embed/31w0cA4MkHs?rel=0&modestbranding=1" 
-                title="自動雞蛋糕機運轉流程" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                allowfullscreen>
-            </iframe>
+            <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" src="https://www.youtube.com/embed/31w0cA4MkHs?rel=0&modestbranding=1" title="自動雞蛋糕機運轉流程" allowfullscreen></iframe>
         </div>
-        <p style="font-size: 0.9em; color: #666; margin-top: 10px;">(點擊播放觀看自動化流程)</p>
     </div>
-
     <div class="features-grid">
      <div>
       <h4>1. 精準 AI 注料系統</h4>
-      <p>告別手動麵糊不均！機器精準控制注料量，確保每顆雞蛋糕品質穩定、大小一致。</p>
+      <p>機器精準控制注料量，確保每顆雞蛋糕品質穩定、大小一致。</p>
      </div>
      <div>
       <h4>2. 高效能出爐速度</h4>
-      <p>機器完成最耗時的烘烤流程，員工只需快速取放，大幅縮短顧客等待時間。</p>
+      <p>機器完成最耗時的烘烤流程，大幅縮短顧客等待時間。</p>
      </div>
      <div>
       <h4>3. 多樣可愛造型模具</h4>
-      <p>輕鬆切換熊、貓、蛋等多種模具，產品自帶話題與高人氣，吸引全齡顧客。</p>
+      <p>輕鬆切換多種模具，自帶話題與高人氣。</p>
      </div>
      <div>
       <h4>4. 衛生與操作簡便</h4>
-      <p>透明化操作流程，符合食品衛生標準。介面直覺，降低員工培訓難度與時間。</p>
+      <p>透明化操作流程，介面直覺，降低員工培訓難度。</p>
      </div>
     </div>
     <img alt="肯尼雞蛋糕自動機全景圖" class="product-image" src="images/machine-full-view.jpg" style="margin-top: 30px;"/>
    </div>
   </section>
 
+  <!-- B2C 蛋糕選購區 -->
+  <section id="b2c-cakes" class="cake-order-section">
+    <div class="container">
+        <h3 style="color: #e67e22; margin-bottom: 10px;">🍰 美味蛋糕線上預購</h3>
+        <p>挑選您喜愛的口味，由 AI 客服為您安排中壢/桃園地區取貨細節</p>
+        
+        <div class="cake-grid">
+            <!-- 產品 1: 極流心巴斯克 -->
+            <div class="cake-card">
+                <div class="image-slider" id="slider1">
+                    <button class="slider-btn btn-prev" onclick="moveSlider('slider1', -1)">❮</button>
+                    <!-- 請在此替換您的兩張巴斯克照片路徑 -->
+                    <img src="images/2.jpg" class="active" alt="極流心巴斯克 1">
+                    <img src="images/3.jpg" alt="極流心巴斯克 2">
+                    <button class="slider-btn btn-next" onclick="moveSlider('slider1', 1)">❯</button>
+                </div>
+                <h4>極流心巴斯克</h4>
+                <div class="price-tag">NT$ <span class="unit-price">120</span> / 顆</div>
+                <input type="number" class="qty-input" value="0" min="0" oninput="calculateTotal()">
+            </div>
+
+            <!-- 產品 2: 經典重乳酪 -->
+            <div class="cake-card">
+                <div class="image-slider" id="slider2">
+                    <button class="slider-btn btn-prev" onclick="moveSlider('slider2', -1)">❮</button>
+                    <!-- 請在此替換您的兩張乳酪蛋糕照片路徑 -->
+                    <img src="images/4.jpg" class="active" alt="經典重乳酪 1">
+                    <img src="images/5.jpg" alt="經典重乳酪 2">
+                    <button class="slider-btn btn-next" onclick="moveSlider('slider2', 1)">❯</button>
+                </div>
+                <h4>經典重乳酪</h4>
+                <div class="price-tag">NT$ <span class="unit-price">110</span> / 顆</div>
+                <input type="number" class="qty-input" value="0" min="0" oninput="calculateTotal()">
+            </div>
+        </div>
+
+        <div class="order-footer">
+            <div id="total-display">預估總金額：<strong>NT$ <span id="grand-total">0</span></strong></div>
+            <button onclick="handleLineOrder()" class="line-checkout-btn">
+                <i class="fab fa-line"></i> 送出訂單至 LINE AI 客服
+            </button>
+        </div>
+    </div>
+  </section>
+
   <section class="blog-section" id="blog">
    <div class="container">
     <h3>💡 創業與技術專欄</h3>
-    <p>分享 AI 自動化餐飲趨勢與創業實戰經驗</p>
     <div class="blog-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
      <article style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: left; margin-bottom: 20px;">
-      <h4 style="color: #e67e22;">傳統創業 vs. AI 輕創業：自動雞蛋糕機如何幫你省下 70% 人力成本？</h4>
-      <p>厭倦了請人難、品質不穩嗎？肯尼雞蛋糕專業分析：自動化設備如何改寫餐飲創業規則...</p>
+      <h4 style="color: #e67e22;">傳統創業 vs. AI 輕創業：自動雞蛋糕機幫你省下 70% 人力</h4>
       <a class="cta-button" href="blog/post-04031215.html" style="padding: 5px 15px; font-size: 0.9em; display: inline-block; margin-top: 10px;">閱讀全文</a>
      </article>
      <article style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: left;">
       <h4 style="color: #e67e22;">2026 創業新趨勢：為什麼 AI 自動化是唯一出路？</h4>
-      <p>在缺工潮下，如何透過科技模組化降低人力負擔，實現真正的智慧輕創業...</p>
       <a class="cta-button" href="blog/how-ai-changes-food-industry.html" style="padding: 5px 15px; font-size: 0.9em; display: inline-block; margin-top: 10px;">閱讀全文</a>
      </article>
     </div>
@@ -124,16 +183,10 @@
     <h3>📢 品牌新聞與最新動態</h3>
     <div class="news-item">
      <h4>[2026/05/04] 【最新進展】自動化機器運轉流程影片正式上線</h4>
-     <p>我們更新了最新的機器運作細節！透過 2026 年升級的 ESP32 控制系統，注漿精準度再次提升，歡迎透過上方影片了解運作細節。</p>
-    </div>
-    <div class="news-item">
-     <h4>[2025/12/10] 【創業洞察】用AI思維優化你的輕食流程</h4>
-     <p>厭倦了傳統繁瑣的餐飲流程嗎？我們的自動雞蛋糕機讓您輕鬆擁抱無人商店新時代！</p>
-     <a href="https://www.threads.com/@c3dqqq/post/DSEtH6zj5xY?xmt=AQF0PWL6qix8tzIYQ_jsixRpLf1uJY8R17rhJc8lELpjRA" target="_blank">查看原貼文 (Threads) »</a>
     </div>
     <div style="margin-top: 20px;">
-        <a class="cta-button secondary-button" href="https://www.facebook.com/KennyGCake">追蹤我們的 FB</a>
-        <a class="cta-button secondary-button" href="https://www.threads.com/@c3dqqq">追蹤我們的 Threads</a>
+        <a class="cta-button secondary-button" href="https://www.facebook.com/KennyGCake">追蹤 FB</a>
+        <a class="cta-button secondary-button" href="https://www.threads.com/@c3dqqq">追蹤 Threads</a>
     </div>
    </div>
   </section>
@@ -141,9 +194,7 @@
   <section class="contact-section" id="contact">
    <div class="container">
     <h3>🤝 掌握先機，立即洽詢</h3>
-    <p>無論您是想加盟創業、採購設備，或對 AI 自動化解決方案有興趣，都歡迎聯繫我們！</p>
-    <p><strong>電話：0986-994952</strong></p>
-    <p><strong>電子郵件：figofpv@gmail.com</strong></p>
+    <p><strong>電話：0986-994952</strong> | <strong>電子郵件：figofpv@gmail.com</strong></p>
     <p><strong>地址：桃園市中壢區中建里延平路500號10樓之4</strong></p>
    </div>
   </section>
@@ -153,5 +204,46 @@
     <p>© 2026 [肯尼雞蛋糕]. All Rights Reserved. | 網站由 GitHub Pages 託管</p>
    </div>
   </footer>
+
+  <script>
+  // 圖片切換邏輯
+  function moveSlider(sliderId, direction) {
+      const slider = document.getElementById(sliderId);
+      const imgs = slider.querySelectorAll('img');
+      let activeIndex = Array.from(imgs).findIndex(img => img.classList.contains('active'));
+      
+      imgs[activeIndex].classList.remove('active');
+      activeIndex = (activeIndex + direction + imgs.length) % imgs.length;
+      imgs[activeIndex].classList.add('active');
+  }
+
+  // 金額計算邏輯
+  function calculateTotal() {
+      let total = 0;
+      document.querySelectorAll('.cake-card').forEach(card => {
+          const price = parseInt(card.querySelector('.unit-price').innerText);
+          const qty = parseInt(card.querySelector('.qty-input').value) || 0;
+          total += price * qty;
+      });
+      document.getElementById('grand-total').innerText = total;
+  }
+
+  // LINE 訂單處理
+  function handleLineOrder() {
+      const total = document.getElementById('grand-total').innerText;
+      if (parseInt(total) === 0) { alert("請先選擇數量喔！"); return; }
+
+      let orderList = "";
+      document.querySelectorAll('.cake-card').forEach(card => {
+          const name = card.querySelector('h4').innerText;
+          const qty = card.querySelector('.qty-input').value;
+          if (parseInt(qty) > 0) orderList += `+ ${name} x ${qty}\n`;
+      });
+
+      const message = `您好！我想預訂蛋糕：\n\n${orderList}\n預估總金額：NT$ ${total}\n\n請問目前中壢/桃園地區何時可以取貨？`;
+      const lineID = "@your_id"; // 請更換為您的 LINE ID
+      window.location.href = `https://line.me/R/oaMessage/${lineID}/?${encodeURIComponent(message)}`;
+  }
+  </script>
  </body>
 </html>
