@@ -35,7 +35,7 @@
         <p class="lead">濃郁乳香、柔滑口感，小份量剛剛好。前一天預訂，Kenny 確認後以 LINE Pay 付款成立訂單。</p>
         <div class="hero-actions">
           <a class="button primary" href="#cart">開始訂購</a>
-          <a class="button secondary" href="https://line.me/R/ti/p/@409llbba" target="_blank" rel="noopener">LINE AI客服</a>
+          <a class="button secondary js-line-chat" href="https://line.me/R/ti/p/@409llbba" data-line-url="line://ti/p/@409llbba" target="_blank" rel="noopener">LINE AI客服</a>
         </div>
       </div>
       <figure class="hero-media">
@@ -159,7 +159,7 @@
           <p class="policy-note">此購物車只會產生詢問內容；請貼到 LINE AI客服，實際訂單需 Kenny 確認總額後，以 LINE Pay 付款成立。</p>
           <textarea id="orderMessage" class="order-message" readonly aria-label="訂購詢問內容"></textarea>
           <div class="contact-links">
-            <a class="button secondary" href="https://line.me/R/ti/p/@409llbba" target="_blank" rel="noopener">前往 LINE AI客服</a>
+            <a class="button secondary js-line-chat" href="https://line.me/R/ti/p/@409llbba" data-line-url="line://ti/p/@409llbba" target="_blank" rel="noopener">前往 LINE AI客服</a>
           </div>
           <p id="copyStatus" class="copy-status" role="status"></p>
         </aside>
@@ -194,7 +194,7 @@
   <footer class="site-footer">
     <p>KennyG Cake 蛋糕工作室</p>
     <div>
-      <a href="https://line.me/R/ti/p/@409llbba" target="_blank" rel="noopener">LINE AI客服</a>
+      <a class="js-line-chat" href="https://line.me/R/ti/p/@409llbba" data-line-url="line://ti/p/@409llbba" target="_blank" rel="noopener">LINE AI客服</a>
     </div>
   </footer>
 
@@ -273,12 +273,27 @@
       }
     }
 
+    function openLineChat(event) {
+      const webUrl = event.currentTarget.href;
+      const appUrl = event.currentTarget.dataset.lineUrl;
+      if (!appUrl) return;
+
+      event.preventDefault();
+      window.location.href = appUrl;
+      window.setTimeout(() => {
+        window.open(webUrl, "_blank", "noopener");
+      }, 900);
+    }
+
     [quantityInput, fulfillmentInput, neededDateInput, noteInput].forEach((input) => {
       input.addEventListener("input", renderCart);
       input.addEventListener("change", renderCart);
     });
 
     copyOrder.addEventListener("click", copyMessage);
+    document.querySelectorAll(".js-line-chat").forEach((link) => {
+      link.addEventListener("click", openLineChat);
+    });
     renderCart();
   </script>
 </body>
