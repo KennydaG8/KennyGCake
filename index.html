@@ -1,249 +1,287 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
- <head>
-  <meta charset="utf-8"/>
-  <meta content="MwfHN48eFENDqxTGbpPsDMJ3W67G6Hs86tbyZ3xzJ8o" name="google-site-verification"/>
-  <title>
-    自動雞蛋糕機 | AI智慧輕創業首選 - [肯尼雞蛋糕] (2026 最新技術)
-  </title>
-  <meta content="[肯尼雞蛋糕] 專注於AI驅動的自動雞蛋糕解決方案。2026年最新自動化技術，低成本、高效率，開啟您的智慧輕創業加盟之路。" name="description"/>
-  <meta content="自動雞蛋糕機, AI自動化, 輕創業加盟, 智慧設備, 餐飲科技, 無人商店, 肯尼雞蛋糕" name="keywords">
-   <link href="style.css" rel="stylesheet"/>
-   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&amp;display=swap" rel="stylesheet"/>
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-   <style>
-     /* 方形輪播圖樣式 */
-     .image-slider { 
-        position: relative; 
-        width: 100%; 
-        aspect-ratio: 1 / 1; /* 強制設定為正方形 */
-        overflow: hidden; 
-        border-radius: 10px; 
-        margin-bottom: 15px; 
-        background-color: #f0f0f0;
-     }
-     .image-slider img { 
-        width: 100%; 
-        height: 100%; 
-        object-fit: cover; /* 確保圖片縮放填滿方形且不變形 */
-        display: none; 
-     }
-     .image-slider img.active { 
-        display: block; 
-     }
-     .slider-btn { 
-        position: absolute; 
-        top: 50%; 
-        transform: translateY(-50%); 
-        background: rgba(0,0,0,0.3); 
-        color: white; 
-        border: none; 
-        padding: 8px 10px; 
-        cursor: pointer; 
-        border-radius: 50%; 
-        font-size: 14px; 
-        z-index: 10;
-        transition: background 0.3s;
-     }
-     .slider-btn:hover { background: rgba(0,0,0,0.6); }
-     .btn-prev { left: 10px; }
-     .btn-next { right: 10px; }
-   </style>
- </head>
- <body>
-  <header>
-   <div class="container">
-    <h1>[肯尼雞蛋糕]</h1>
-    <nav>
-     <ul>
-      <li><a href="#about">關於我們</a></li>
-      <li><a href="#product">產品特色</a></li>
-      <li><a href="#b2c-cakes">線上預購</a></li>
-      <li><a href="#news">品牌新聞</a></li>
-      <li><a href="#contact">合作洽詢</a></li>
-     </ul>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="KennyG Cake 蛋糕工作室，2 吋原味巴斯克蛋糕，台北桃園可自取，亦可使用 7-11 冷凍賣貨便。" />
+  <meta property="og:title" content="KennyG Cake 蛋糕工作室" />
+  <meta property="og:description" content="2 吋原味巴斯克蛋糕 NT$85，前一天預訂，LINE Pay 確認付款。" />
+  <meta property="og:image" content="images/2.jpg" />
+  <title>KennyG Cake 蛋糕工作室 | 原味巴斯克蛋糕</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="KennyG Cake 首頁">
+      <span class="brand-mark">KG</span>
+      <span>
+        <strong>KennyG Cake</strong>
+        <small>蛋糕工作室</small>
+      </span>
+    </a>
+    <nav class="site-nav" aria-label="主要導覽">
+      <a href="#product">商品</a>
+      <a href="#order">訂購</a>
+      <a href="#cart">購物車</a>
+      <a href="#taste">吃法</a>
     </nav>
-   </div>
   </header>
 
-  <section class="hero-section" id="hero">
-   <div class="container">
-    <h2 class="animate-in">🤖 科技賦能，開啟您的 2026 智慧輕食事業 🚀</h2>
-    <p>我們的自動雞蛋糕機，結合 AI 精準控制與高效出餐，讓您以最低人力成本，打造高品質、高效率的餐飲新模式！</p>
-    <a class="cta-button" href="#product">立即了解機器優勢</a>
-   </div>
-  </section>
-
-  <section class="about-section" id="about">
-   <div class="container">
-    <h3>關於我們：AI 驅動的效率革命</h3>
-    <div class="founder-bio">
-     <img alt="創始人 Kenny Huang 專注於AI自動化" class="profile-photo" src="images/founder-photo.png"/>
-     <h4>創始人：Kenny Huang</h4>
-     <p><strong>專注 AI 自動化實踐者。</strong> Kenny Huang 先生曾任職於頂尖科技公司 AI 部門，將數據科學和機器學習邏輯導入傳統餐飲業。</p>
-     <p>我們的理念是：透過自動智慧系統，將複雜的製作流程標準化，實現真正的輕量級高效率創業。</p>
-    </div>
-   </div>
-  </section>
-
-  <section class="product-section" id="product">
-   <div class="container">
-    <h3>📈 產品特色：自動，全優勢！</h3>
-    <div class="video-container" style="max-width: 315px; margin: 30px auto; text-align: center;">
-        <h4 style="margin-bottom: 15px; color: #e67e22;">🎬 2026 實機運轉流程展示</h4>
-        <div class="iframe-wrapper" style="position: relative; padding-bottom: 177.77%; height: 0; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-radius: 15px;">
-            <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" src="https://www.youtube.com/embed/31w0cA4MkHs?rel=0&modestbranding=1" title="自動雞蛋糕機運轉流程" allowfullscreen></iframe>
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">2 吋原味巴斯克蛋糕</p>
+        <h1>KennyG Cake 蛋糕工作室</h1>
+        <p class="lead">濃郁乳香、柔滑口感，小份量剛剛好。前一天預訂，Kenny 確認後以 LINE Pay 付款成立訂單。</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#cart">開始訂購</a>
+          <a class="button secondary" href="https://www.instagram.com/kennygcake/" target="_blank" rel="noopener">IG @kennygcake</a>
         </div>
-    </div>
-    <div class="features-grid">
-     <div>
-      <h4>1. 精準 AI 注料系統</h4>
-      <p>機器精準控制注料量，確保每顆雞蛋糕品質穩定、大小一致。</p>
-     </div>
-     <div>
-      <h4>2. 高效能出爐速度</h4>
-      <p>機器完成最耗時的烘烤流程，大幅縮短顧客等待時間。</p>
-     </div>
-     <div>
-      <h4>3. 多樣可愛造型模具</h4>
-      <p>輕鬆切換多種模具，自帶話題與高人氣。</p>
-     </div>
-     <div>
-      <h4>4. 衛生與操作簡便</h4>
-      <p>透明化操作流程，介面直覺，降低員工培訓難度。</p>
-     </div>
-    </div>
-    <img alt="肯尼雞蛋糕自動機全景圖" class="product-image" src="images/machine-full-view.jpg" style="margin-top: 30px;"/>
-   </div>
-  </section>
+      </div>
+      <figure class="hero-media">
+        <img src="images/2.jpg" alt="KennyG Cake 2 吋巴斯克蛋糕包裝照" />
+      </figure>
+    </section>
 
-  <!-- B2C 蛋糕選購區 -->
-  <section id="b2c-cakes" class="cake-order-section">
-    <div class="container">
-        <h3 style="color: #e67e22; margin-bottom: 10px;">🍰 美味蛋糕線上預購</h3>
-        <p>挑選您喜愛的口味，由 AI 客服為您安排中壢/桃園地區取貨細節</p>
-        
-        <div class="cake-grid">
-            <!-- 產品 1: 極流心巴斯克 -->
-            <div class="cake-card">
-                <div class="image-slider" id="slider1">
-                    <button class="slider-btn btn-prev" onclick="moveSlider('slider1', -1)">❮</button>
-                    <!-- 請在此替換您的兩張巴斯克照片路徑 -->
-                    <img src="images/2.jpg" class="active" alt="極流心巴斯克 1">
-                    <img src="images/3.jpg" alt="極流心巴斯克 2">
-                    <button class="slider-btn btn-next" onclick="moveSlider('slider1', 1)">❯</button>
-                </div>
-                <h4>極流心巴斯克</h4>
-                <div class="price-tag">NT$ <span class="unit-price">120</span> / 顆</div>
-                <input type="number" class="qty-input" value="0" min="0" oninput="calculateTotal()">
+    <section id="product" class="section product-section">
+      <div class="section-heading">
+        <p class="eyebrow">目前販售</p>
+        <h2>原味巴斯克蛋糕</h2>
+      </div>
+      <div class="product-grid">
+        <article class="product-card">
+          <img src="images/5.jpg" alt="原味巴斯克蛋糕切片展示" />
+          <div>
+            <h3>2 吋單人份</h3>
+            <p>適合下午茶、送禮小點，冷凍配送收到後依建議時間解凍，口感更穩定。</p>
+            <div class="price-row">
+              <span>NT$85</span>
+              <small>每顆</small>
             </div>
-
-            <!-- 產品 2: 經典重乳酪 -->
-            <div class="cake-card">
-                <div class="image-slider" id="slider2">
-                    <button class="slider-btn btn-prev" onclick="moveSlider('slider2', -1)">❮</button>
-                    <!-- 請在此替換您的兩張乳酪蛋糕照片路徑 -->
-                    <img src="images/4.jpg" class="active" alt="經典重乳酪 1">
-                    <img src="images/5.jpg" alt="經典重乳酪 2">
-                    <button class="slider-btn btn-next" onclick="moveSlider('slider2', 1)">❯</button>
-                </div>
-                <h4>經典重乳酪</h4>
-                <div class="price-tag">NT$ <span class="unit-price">110</span> / 顆</div>
-                <input type="number" class="qty-input" value="0" min="0" oninput="calculateTotal()">
+          </div>
+        </article>
+        <div class="info-panel">
+          <dl>
+            <div>
+              <dt>預訂</dt>
+              <dd>前一天預訂；假日不出貨，延到工作日出貨。</dd>
             </div>
+            <div>
+              <dt>取貨</dt>
+              <dd>台北、桃園可自取，需先與 Kenny 確認時間與地點。</dd>
+            </div>
+            <div>
+              <dt>配送</dt>
+              <dd>可使用 7-11 冷凍賣貨便，12 個免運；未滿 12 個運費由 Kenny 確認。</dd>
+            </div>
+            <div>
+              <dt>付款</dt>
+              <dd>總額、日期與取貨方式確認後，提供 LINE Pay 連結先付款。</dd>
+            </div>
+          </dl>
         </div>
+      </div>
+    </section>
 
-        <div class="order-footer">
-            <div id="total-display">預估總金額：<strong>NT$ <span id="grand-total">0</span></strong></div>
-            <button onclick="handleLineOrder()" class="line-checkout-btn">
-                <i class="fab fa-line"></i> 送出訂單至 LINE AI 客服
-            </button>
-        </div>
+    <section id="order" class="section order-section">
+      <div class="section-heading">
+        <p class="eyebrow">訂購流程</p>
+        <h2>先詢問，再確認付款</h2>
+      </div>
+      <ol class="steps">
+        <li>
+          <strong>送出詢問</strong>
+          <span>在購物車填寫數量、需求日期與取貨方式。</span>
+        </li>
+        <li>
+          <strong>Kenny 確認</strong>
+          <span>確認排程、總額、配送或自取細節。</span>
+        </li>
+        <li>
+          <strong>LINE Pay 付款</strong>
+          <span>收到付款連結並完成付款後，訂單才成立。</span>
+        </li>
+        <li>
+          <strong>取貨或冷凍配送</strong>
+          <span>依約定時間自取，或使用 7-11 冷凍賣貨便配送。</span>
+        </li>
+      </ol>
+    </section>
+
+    <section id="cart" class="section cart-section">
+      <div class="section-heading">
+        <p class="eyebrow">購物車</p>
+        <h2>產生訂購詢問</h2>
+      </div>
+      <div class="cart-layout">
+        <form class="cart-form" id="orderForm">
+          <label>
+            數量
+            <input id="quantity" name="quantity" type="number" min="1" step="1" value="1" />
+          </label>
+          <label>
+            需求日期
+            <input id="neededDate" name="neededDate" type="date" />
+          </label>
+          <label>
+            取貨方式
+            <select id="fulfillment" name="fulfillment">
+              <option value="台北自取">台北自取</option>
+              <option value="桃園自取">桃園自取</option>
+              <option value="7-11 冷凍賣貨便">7-11 冷凍賣貨便</option>
+            </select>
+          </label>
+          <label>
+            備註
+            <textarea id="note" name="note" rows="4" placeholder="例如：希望下午取貨、收件門市、是否需要分裝等"></textarea>
+          </label>
+          <button class="button primary" type="button" id="copyOrder">複製詢問內容</button>
+        </form>
+
+        <aside class="cart-summary" aria-live="polite">
+          <div class="summary-line">
+            <span>原味巴斯克 2 吋</span>
+            <strong id="lineTotal">NT$85</strong>
+          </div>
+          <div class="summary-line muted">
+            <span>單價</span>
+            <span>NT$85</span>
+          </div>
+          <div class="summary-line muted">
+            <span>數量</span>
+            <span id="summaryQty">1</span>
+          </div>
+          <div class="summary-total">
+            <span>商品小計</span>
+            <strong id="subtotal">NT$85</strong>
+          </div>
+          <p id="shippingNote" class="shipping-note">自取地點與時間需由 Kenny 確認。</p>
+          <p class="policy-note">此購物車只會產生詢問內容；實際訂單需 Kenny 確認總額後，以 LINE Pay 付款成立。</p>
+          <textarea id="orderMessage" class="order-message" readonly aria-label="訂購詢問內容"></textarea>
+          <div class="contact-links">
+            <a class="button secondary" href="https://www.instagram.com/kennygcake/" target="_blank" rel="noopener">前往 IG</a>
+            <a class="button secondary" href="https://www.threads.net/@kennygcake" target="_blank" rel="noopener">前往 Threads</a>
+          </div>
+          <p id="copyStatus" class="copy-status" role="status"></p>
+        </aside>
+      </div>
+    </section>
+
+    <section id="taste" class="section taste-section">
+      <div class="section-heading">
+        <p class="eyebrow">最佳吃法</p>
+        <h2>冷凍收到後，慢慢回到柔滑口感</h2>
+      </div>
+      <div class="taste-grid">
+        <article>
+          <img src="images/3.jpg" alt="巴斯克蛋糕流心切面" />
+          <h3>冰箱解凍</h3>
+          <p>收到冷凍巴斯克後，放置冰箱 3 小時以上解凍。</p>
+        </article>
+        <article>
+          <img src="images/4.jpg" alt="KennyG Cake 原味巴斯克蛋糕包裝" />
+          <h3>快速享用</h3>
+          <p>室溫放置 1 小時，再放冰箱冷藏至少 30 分鐘。</p>
+        </article>
+        <article>
+          <img src="images/founder-photo.png" alt="KennyG Cake 品牌圖像" />
+          <h3>過敏原</h3>
+          <p>本產品含雞蛋、牛奶。若有特殊飲食需求，請先私訊確認。</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>KennyG Cake 蛋糕工作室</p>
+    <div>
+      <a href="https://www.instagram.com/kennygcake/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.threads.net/@kennygcake" target="_blank" rel="noopener">Threads</a>
     </div>
-  </section>
-
-  <section class="blog-section" id="blog">
-   <div class="container">
-    <h3>💡 創業與技術專欄</h3>
-    <div class="blog-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
-     <article style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: left; margin-bottom: 20px;">
-      <h4 style="color: #e67e22;">傳統創業 vs. AI 輕創業：自動雞蛋糕機幫你省下 70% 人力</h4>
-      <a class="cta-button" href="blog/post-04031215.html" style="padding: 5px 15px; font-size: 0.9em; display: inline-block; margin-top: 10px;">閱讀全文</a>
-     </article>
-     <article style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: left;">
-      <h4 style="color: #e67e22;">2026 創業新趨勢：為什麼 AI 自動化是唯一出路？</h4>
-      <a class="cta-button" href="blog/how-ai-changes-food-industry.html" style="padding: 5px 15px; font-size: 0.9em; display: inline-block; margin-top: 10px;">閱讀全文</a>
-     </article>
-    </div>
-   </div>
-  </section>
-
-  <section class="news-section" id="news">
-   <div class="container">
-    <h3>📢 品牌新聞與最新動態</h3>
-    <div class="news-item">
-     <h4>[2026/05/04] 【最新進展】自動化機器運轉流程影片正式上線</h4>
-    </div>
-    <div style="margin-top: 20px;">
-        <a class="cta-button secondary-button" href="https://www.facebook.com/KennyGCake">追蹤 FB</a>
-        <a class="cta-button secondary-button" href="https://www.threads.com/@c3dqqq">追蹤 Threads</a>
-    </div>
-   </div>
-  </section>
-
-  <section class="contact-section" id="contact">
-   <div class="container">
-    <h3>🤝 掌握先機，立即洽詢</h3>
-    <p><strong>電話：0986-994952</strong> | <strong>電子郵件：kennygcake@gmail.com</strong></p>
-    <p><strong>地址：桃園市中壢區中建里延平路500號10樓之4</strong></p>
-   </div>
-  </section>
-
-  <footer>
-   <div class="container">
-    <p>© 2026 [肯尼雞蛋糕]. All Rights Reserved. | 網站由 GitHub Pages 託管</p>
-   </div>
   </footer>
 
   <script>
-  // 圖片切換邏輯
-  function moveSlider(sliderId, direction) {
-      const slider = document.getElementById(sliderId);
-      const imgs = slider.querySelectorAll('img');
-      let activeIndex = Array.from(imgs).findIndex(img => img.classList.contains('active'));
-      
-      imgs[activeIndex].classList.remove('active');
-      activeIndex = (activeIndex + direction + imgs.length) % imgs.length;
-      imgs[activeIndex].classList.add('active');
-  }
+    const unitPrice = 85;
+    const quantityInput = document.querySelector("#quantity");
+    const fulfillmentInput = document.querySelector("#fulfillment");
+    const neededDateInput = document.querySelector("#neededDate");
+    const noteInput = document.querySelector("#note");
+    const summaryQty = document.querySelector("#summaryQty");
+    const lineTotal = document.querySelector("#lineTotal");
+    const subtotal = document.querySelector("#subtotal");
+    const shippingNote = document.querySelector("#shippingNote");
+    const orderMessage = document.querySelector("#orderMessage");
+    const copyStatus = document.querySelector("#copyStatus");
+    const copyOrder = document.querySelector("#copyOrder");
 
-  // 金額計算邏輯
-  function calculateTotal() {
-      let total = 0;
-      document.querySelectorAll('.cake-card').forEach(card => {
-          const price = parseInt(card.querySelector('.unit-price').innerText);
-          const qty = parseInt(card.querySelector('.qty-input').value) || 0;
-          total += price * qty;
-      });
-      document.getElementById('grand-total').innerText = total;
-  }
+    const formatCurrency = (value) => `NT$${value.toLocaleString("zh-TW")}`;
 
-  // LINE 訂單處理
-  function handleLineOrder() {
-      const total = document.getElementById('grand-total').innerText;
-      if (parseInt(total) === 0) { alert("請先選擇數量喔！"); return; }
+    function getQuantity() {
+      const parsed = Number.parseInt(quantityInput.value, 10);
+      return Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
+    }
 
-      let orderList = "";
-      document.querySelectorAll('.cake-card').forEach(card => {
-          const name = card.querySelector('h4').innerText;
-          const qty = card.querySelector('.qty-input').value;
-          if (parseInt(qty) > 0) orderList += `+ ${name} x ${qty}\n`;
-      });
+    function buildMessage() {
+      const qty = getQuantity();
+      const total = qty * unitPrice;
+      const fulfillment = fulfillmentInput.value;
+      const neededDate = neededDateInput.value || "尚未指定";
+      const note = noteInput.value.trim() || "無";
+      const freeShipping = fulfillment.includes("7-11") && qty >= 12;
+      const shippingText = fulfillment.includes("7-11")
+        ? freeShipping
+          ? "7-11 冷凍賣貨便，12 個免運"
+          : "7-11 冷凍賣貨便，未滿 12 個運費請協助確認"
+        : `${fulfillment}，時間地點請協助確認`;
 
-      const message = `您好！我想預訂蛋糕：\n\n${orderList}\n預估總金額：NT$ ${total}\n\n請問目前中壢/桃園地區何時可以取貨？`;
-      const lineID = "@409llbba"; // 請更換為您的 LINE ID
-      window.location.href = `https://line.me/R/oaMessage/${lineID}/?${encodeURIComponent(message)}`;
-  }
+      return [
+        "您好，我想詢問 KennyG Cake 訂購：",
+        `商品：原味巴斯克蛋糕 2 吋`,
+        `數量：${qty} 顆`,
+        `商品小計：${formatCurrency(total)}`,
+        `需求日期：${neededDate}`,
+        `取貨方式：${shippingText}`,
+        `備註：${note}`,
+        "請協助確認排程、總額與 LINE Pay 付款資訊，謝謝。"
+      ].join("\n");
+    }
+
+    function renderCart() {
+      const qty = getQuantity();
+      const total = qty * unitPrice;
+      summaryQty.textContent = qty;
+      lineTotal.textContent = formatCurrency(total);
+      subtotal.textContent = formatCurrency(total);
+
+      if (fulfillmentInput.value.includes("7-11")) {
+        shippingNote.textContent = qty >= 12
+          ? "7-11 冷凍賣貨便 12 個免運。"
+          : "7-11 冷凍賣貨便未滿 12 個，運費與可配送日期需由 Kenny 確認。";
+      } else {
+        shippingNote.textContent = "自取地點與時間需由 Kenny 確認。";
+      }
+
+      orderMessage.value = buildMessage();
+    }
+
+    async function copyMessage() {
+      renderCart();
+      try {
+        await navigator.clipboard.writeText(orderMessage.value);
+        copyStatus.textContent = "已複製，可貼到 IG 或 Threads 私訊。";
+      } catch (error) {
+        orderMessage.select();
+        copyStatus.textContent = "瀏覽器未允許自動複製，請手動選取上方內容複製。";
+      }
+    }
+
+    [quantityInput, fulfillmentInput, neededDateInput, noteInput].forEach((input) => {
+      input.addEventListener("input", renderCart);
+      input.addEventListener("change", renderCart);
+    });
+
+    copyOrder.addEventListener("click", copyMessage);
+    renderCart();
   </script>
- </body>
+</body>
 </html>
