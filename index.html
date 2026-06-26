@@ -35,7 +35,7 @@
         <p class="lead">濃郁乳香、柔滑口感，小份量剛剛好。前一天預訂，Kenny 確認後以 LINE Pay 付款成立訂單。</p>
         <div class="hero-actions">
           <a class="button primary" href="#cart">開始訂購</a>
-          <a class="button secondary" href="https://www.instagram.com/kennygcake/" target="_blank" rel="noopener">IG @kennygcake</a>
+          <a class="button secondary" href="https://line.me/R/ti/p/@409llbba" target="_blank" rel="noopener">LINE AI客服</a>
         </div>
       </div>
       <figure class="hero-media">
@@ -156,11 +156,10 @@
             <strong id="subtotal">NT$85</strong>
           </div>
           <p id="shippingNote" class="shipping-note">自取地點與時間需由 Kenny 確認。</p>
-          <p class="policy-note">此購物車只會產生詢問內容；實際訂單需 Kenny 確認總額後，以 LINE Pay 付款成立。</p>
+          <p class="policy-note">此購物車只會產生詢問內容；請貼到 LINE AI客服，實際訂單需 Kenny 確認總額後，以 LINE Pay 付款成立。</p>
           <textarea id="orderMessage" class="order-message" readonly aria-label="訂購詢問內容"></textarea>
           <div class="contact-links">
-            <a class="button secondary" href="https://www.instagram.com/kennygcake/" target="_blank" rel="noopener">前往 IG</a>
-            <a class="button secondary" href="https://www.threads.net/@kennygcake" target="_blank" rel="noopener">前往 Threads</a>
+            <a class="button secondary" href="https://line.me/R/ti/p/@409llbba" target="_blank" rel="noopener">前往 LINE AI客服</a>
           </div>
           <p id="copyStatus" class="copy-status" role="status"></p>
         </aside>
@@ -195,8 +194,7 @@
   <footer class="site-footer">
     <p>KennyG Cake 蛋糕工作室</p>
     <div>
-      <a href="https://www.instagram.com/kennygcake/" target="_blank" rel="noopener">Instagram</a>
-      <a href="https://www.threads.net/@kennygcake" target="_blank" rel="noopener">Threads</a>
+      <a href="https://line.me/R/ti/p/@409llbba" target="_blank" rel="noopener">LINE AI客服</a>
     </div>
   </footer>
 
@@ -242,7 +240,7 @@
         `需求日期：${neededDate}`,
         `取貨方式：${shippingText}`,
         `備註：${note}`,
-        "請協助確認排程、總額與 LINE Pay 付款資訊，謝謝。"
+        "請透過 LINE AI客服協助確認排程、總額與 LINE Pay 付款資訊，謝謝。"
       ].join("\n");
     }
 
@@ -268,7 +266,7 @@
       renderCart();
       try {
         await navigator.clipboard.writeText(orderMessage.value);
-        copyStatus.textContent = "已複製，可貼到 IG 或 Threads 私訊。";
+        copyStatus.textContent = "已複製，可貼到 LINE AI客服對話。";
       } catch (error) {
         orderMessage.select();
         copyStatus.textContent = "瀏覽器未允許自動複製，請手動選取上方內容複製。";
