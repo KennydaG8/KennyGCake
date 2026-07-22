@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "candidate_only": true,
+  "period": {
+    "type": "weekly",
+    "label": "Instagram Weekly Review",
+    "date": null
+  },
+  "brand": "KennyG Cake",
+  "workflow": ["AI-assisted", "Human-reviewed"],
+  "status": "Real Operation",
+  "weekly": {
+    "posts": 3,
+    "reels": 2,
+    "views": 483,
+    "reach": null,
+    "non_followers": 92,
+    "profile_visits": null,
+    "website_clicks": null,
+    "followers": null,
+    "stories": null,
+    "growth": {
+      "views_percent": 49,
+      "basis": "Instagram weekly comparison"
+    },
+    "top_content": [
+      {"label": "Content 1", "views": 236},
+      {"label": "Content 2", "views": 137},
+      {"label": "Content 3", "views": 19}
+    ]
+  },
+  "verification": {
+    "method": "visual screenshot review",
+    "verified_metrics_only": true,
+    "public_safe": true,
+    "review_date": "2026-07-22"
+  },
+  "hashes": [
+    "C8C774923E8FF0CDADE8A08664BCF751ED02EEB2F1CFB9D240AC60011286E4B1",
+    "F45FD6504401D6B8035184B1BECCA858ED7E1FEBF084AE1B96EBF943F5AEA2CE"
+  ]
+}
