@@ -1,0 +1,13 @@
+name = "kennygcake-group-buy-api"
+main = "src/index.ts"
+compatibility_date = "2026-08-20"
+workers_dev = false
+
+[[d1_databases]]
+binding = "DB"
+database_name = "kennygcake-group-buy"
+database_id = "REPLACE_DURING_PHASE_2_STAGING_SETUP"
+migrations_dir = "migrations"
+
+[vars]
+ALLOWED_ORIGINS = "https://kennygcake.com,http://127.0.0.1:4173,http://localhost:4173"
