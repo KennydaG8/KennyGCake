@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>企業限定團購｜KennyG Cake</title>
+  <link rel="stylesheet" href="group-buy.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="campaign-header">
+      <a class="campaign-brand" href="#main" aria-label="前往團購內容">
+        <img src="../images/kennyg-logo.png" alt="" width="48" height="48">
+        <span><strong>KennyG Cake</strong><small>企業限定團購</small></span>
+      </a>
+      <span class="unlisted-badge">試吃活動限定</span>
+    </header>
+
+    <main id="main" aria-live="polite">
+      <section id="loading-state" class="state-card centered-state">
+        <span class="spinner" aria-hidden="true"></span>
+        <p>正在確認活動資訊…</p>
+      </section>
+
+      <section id="error-state" class="state-card centered-state" hidden>
+        <p class="eyebrow">Campaign unavailable</p>
+        <h1 id="error-title">無法開啟團購頁面</h1>
+        <p id="error-message">請重新掃描試吃桌上的 QR Code。</p>
+      </section>
+
+      <div id="campaign-content" hidden>
+        <section class="hero-card">
+          <div>
+            <p class="eyebrow" id="company-name"></p>
+            <h1 id="campaign-name"></h1>
+            <p class="subtitle">KennyG Cake 巴斯克乳酪蛋糕</p>
+          </div>
+          <div class="campaign-meta" id="campaign-meta"></div>
+          <div class="cold-note"><span aria-hidden="true">❄</span><p id="campaign-note"></p></div>
+        </section>
+
+        <section class="progress-card" aria-labelledby="progress-heading">
+          <div class="section-title-row">
+            <div><p class="eyebrow">Group progress</p><h2 id="progress-heading">公司團購進度</h2></div>
+            <strong id="progress-percent">0%</strong>
+          </div>
+          <p class="progress-amount" id="progress-amount"></p>
+          <div class="progress-track" role="progressbar" aria-label="公司團購成團進度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="progress-bar"></span>
+          </div>
+          <p class="progress-copy" id="progress-copy"></p>
+        </section>
+
+        <section class="products-section" aria-labelledby="products-heading">
+          <div class="section-heading"><p class="eyebrow">Choose your flavor</p><h2 id="products-heading">選擇喜歡的口味</h2><p>每一顆都是剛剛好的療癒份量。</p></div>
+          <div id="product-list" class="product-list"></div>
+        </section>
+
+        <section class="checkout-card" aria-labelledby="checkout-heading">
+          <div class="section-heading"><p class="eyebrow">Pickup details</p><h2 id="checkout-heading">填寫領取資料</h2><p>不需註冊會員，付款後將依姓名分裝。</p></div>
+          <form id="order-form" novalidate>
+            <div class="field-grid">
+              <label>姓名 <span>必填</span><input id="customer-name" name="customerName" autocomplete="name" maxlength="50" required></label>
+              <label>手機 <span>必填</span><input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="09xxxxxxxx" required></label>
+              <label>部門 <small>選填</small><input name="department" maxlength="80"></label>
+              <label>LINE 顯示名稱 <small>選填</small><input name="lineName" maxlength="80"></label>
+              <label class="full-width">備註 <small>選填</small><textarea name="note" rows="3" maxlength="300" placeholder="例如：分裝提醒"></textarea></label>
+            </div>
+            <p id="form-message" class="form-message" role="alert"></p>
+            <div class="checkout-summary">
+              <p>本次選購</p>
+              <strong><span id="total-quantity">0</span> 顆｜<span id="total-amount">NT$0</span></strong>
+            </div>
+            <button id="checkout-button" type="submit" disabled>請先選擇商品</button>
+            <p class="payment-note">下一階段將使用每筆訂單專屬的 LINE Pay 交易付款。</p>
+          </form>
+        </section>
+      </div>
+    </main>
+
+    <footer class="campaign-footer"><strong>KennyG Cake</strong><span>企業統一配送・員工現場領取</span></footer>
+  </div>
+  <script type="module" src="group-buy.js"></script>
+</body>
+</html>

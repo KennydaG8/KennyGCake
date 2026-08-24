@@ -1,0 +1,21 @@
+{
+  "id": "gongxin",
+  "companyName": "公信電子",
+  "campaignName": "公信電子員工限定團購",
+  "visibility": "UNLISTED",
+  "status": "ACTIVE",
+  "orderDeadline": null,
+  "deliveryDate": null,
+  "deliveryStartTime": "12:00",
+  "deliveryEndTime": "13:00",
+  "deliveryMethod": "公司統一配送／員工現場領取",
+  "deliveryFee": 0,
+  "freeDeliveryThreshold": 1000,
+  "note": "商品為冷凍商品，請於指定時間內完成領取。",
+  "paidAmount": 765,
+  "products": [
+    { "id": "original", "name": "經典原味", "unitPrice": 85, "imageUrl": "../images/basque-original-cut.png", "active": true },
+    { "id": "matcha", "name": "濃香抹茶", "unitPrice": 85, "imageUrl": "../images/basque-matcha-cut.png", "active": true },
+    { "id": "chocolate", "name": "醇厚巧克力", "unitPrice": 85, "imageUrl": "../images/basque-chocolate-cut.png", "active": true }
+  ]
+}
