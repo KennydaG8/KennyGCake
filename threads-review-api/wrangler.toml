@@ -1,0 +1,14 @@
+name = "kennygcake-threads-review-api"
+main = "src/index.js"
+compatibility_date = "2026-08-25"
+workers_dev = true
+preview_urls = false
+
+[vars]
+THREADS_API_VERSION = "v1.0"
+ALLOWED_ORIGIN = "https://kennygcake.com"
+
+[[ratelimits]]
+name = "RATE_LIMITER"
+namespace_id = "1001"
+simple = { limit = 30, period = 60 }
