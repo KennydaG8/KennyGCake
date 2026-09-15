@@ -35,7 +35,7 @@ export function corsPreflight(request: Request, env: Env): Response {
   return new Response(null, { status: 204, headers: {
     "Access-Control-Allow-Origin": origin,
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Authorization, Content-Type",
+    "Access-Control-Allow-Headers": "Authorization, Content-Type, Idempotency-Key",
     "Access-Control-Max-Age": "600",
     "Vary": "Origin",
   }});

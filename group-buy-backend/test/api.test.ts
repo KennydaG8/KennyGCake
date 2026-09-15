@@ -61,6 +61,20 @@ beforeEach(async () => {
 });
 
 describe("campaign API", () => {
+  it("allows the payment idempotency header in browser preflight", async () => {
+    const response = await SELF.fetch("https://groupbuy-api.kennygcake.com/v1/campaigns/onsite-pay/orders/example-order/payments", {
+      method: "OPTIONS",
+      headers: {
+        Origin: "https://kennygcake.com",
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "idempotency-key",
+      },
+    });
+    expect(response.status).toBe(204);
+    expect(response.headers.get("Access-Control-Allow-Origin")).toBe("https://kennygcake.com");
+    expect(response.headers.get("Access-Control-Allow-Headers")?.toLowerCase()).toContain("idempotency-key");
+  });
+
   it("allows a public payment campaign without a campaign token", async () => {
     await seedCampaign();
     await env.DB.prepare("UPDATE campaigns SET public_access=1 WHERE id='gongxin'").run();
