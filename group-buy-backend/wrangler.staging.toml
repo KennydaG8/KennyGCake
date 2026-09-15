@@ -1,0 +1,16 @@
+name = "kennygcake-group-buy-api-staging"
+main = "src/index.ts"
+compatibility_date = "2026-08-20"
+workers_dev = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "kennygcake-group-buy-staging"
+database_id = "352111e7-ca9a-4f22-b835-9d32163470c7"
+migrations_dir = "migrations"
+
+[vars]
+ALLOWED_ORIGINS = "https://kennygcake.com"
+PUBLIC_API_BASE_URL = "https://kennygcake-group-buy-api-staging.kennygcake-group-buy-backend.workers.dev"
+LINE_PAY_API_BASE_URL = "https://sandbox-api-pay.line.me"
+PAYMENT_ENABLED_CAMPAIGNS = ""

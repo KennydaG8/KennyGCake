@@ -1,5 +1,5 @@
 import { calculateSelection, isOrderingOpen } from "./models.js";
-import { loadCampaign } from "./api-client.js";
+import { createOrder, loadCampaign, requestPayment } from "./api-client.js";
 
 const number = new Intl.NumberFormat("zh-TW", { maximumFractionDigits: 0 });
 const money = { format: (value) => `NT$${number.format(value)}` };
@@ -98,6 +98,7 @@ function renderCampaign() {
   $("#company-name").textContent = campaign.companyName;
   $("#campaign-name").textContent = campaign.campaignName;
   $("#campaign-note").textContent = campaign.note || "商品為冷凍商品，請於指定時間內完成領取。";
+  if (campaign.bundlePricing) $("#pricing-copy").textContent = `三種口味任選 ${campaign.bundlePricing.quantity} 顆 ${money.format(campaign.bundlePricing.price)}，可自由混搭。`;
   renderMeta(); renderProgress(); renderProducts();
   if (!isOrderingOpen(campaign)) {
     $("#checkout-button").disabled = true;
@@ -107,7 +108,7 @@ function renderCampaign() {
   $("#campaign-content").hidden = false;
 }
 
-$("#order-form").addEventListener("submit", (event) => {
+$("#order-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   const summary = JSON.parse($("#checkout-button").dataset.summary || "{}");
   if (!summary.totalQuantity) return;
@@ -116,7 +117,12 @@ $("#order-form").addEventListener("submit", (event) => {
     $("#form-message").textContent = "Phase 1 僅驗證介面與資料模型，不會建立訂單或連接 LINE Pay。";
     return;
   }
-  $("#form-message").textContent = "付款服務尚未啟用。";
+  const button=$("#checkout-button"), form=new FormData(event.currentTarget); button.disabled=true; button.textContent="建立測試訂單中…";
+  try {
+    const params=new URLSearchParams(window.location.hash.slice(1) || window.location.search), access=params.get("access");
+    const order=await createOrder(campaign.id,access,{customerName:form.get("customerName"),phone:form.get("phone"),department:form.get("department"),lineName:form.get("lineName"),note:form.get("note"),items:summary.items});
+    button.textContent="前往 LINE Pay…"; const payment=await requestPayment(campaign.id,access,order.orderId); window.location.assign(payment.paymentUrl);
+  } catch (error) { $("#form-message").textContent=`無法建立付款：${error instanceof Error ? error.message : "UNKNOWN"}`; button.disabled=false; button.textContent="前往 LINE Pay"; }
 });
 
 try {

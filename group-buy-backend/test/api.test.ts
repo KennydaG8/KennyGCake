@@ -1,6 +1,7 @@
 import { applyD1Migrations, env, SELF } from "cloudflare:test";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { campaignTokenDigest } from "../src/security";
+import { confirmPayment, requestPayment } from "../src/payment";
 
 const TOKEN = "gongxin-test-access-token-12345678901234567890";
 
@@ -25,6 +26,28 @@ beforeAll(async () => {
   await applyD1Migrations(env.DB, env.TEST_MIGRATIONS);
 });
 
+describe("LINE Pay Sandbox payment API", () => {
+  it("requests and confirms once when callbacks are duplicated", async () => {
+    await seedCampaign();
+    const orderResponse = await campaignRequest("/v1/campaigns/gongxin/orders", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customerName: "測試", phone: "+886 912-345-678", items: [{ productId: "original", quantity: 2 }] }) });
+    const order = await orderResponse.json() as any;
+    expect((await env.DB.prepare("SELECT phone FROM orders WHERE id=?1").bind(order.orderId).first<any>())?.phone).toBe("0912345678");
+    const originalFetch = globalThis.fetch;
+    let calls = 0;
+    globalThis.fetch = async () => { calls++; return new Response(JSON.stringify(calls === 1 ? { returnCode: "0000", returnMessage: "OK", info: { transactionId: "2026082412345678901", paymentUrl: { web: "https://sandbox-web-pay.line.me/test" } } } : { returnCode: "0000", returnMessage: "OK", info: {} })); };
+    const payment = await requestPayment(new Request("https://test", { method: "POST", headers: { "Idempotency-Key": "test-payment-key-000001" } }), env, order.orderId, "gongxin") as any;
+    expect(payment).toMatchObject({ status: "REQUESTED", transactionId: "2026082412345678901" });
+    const duplicate = await requestPayment(new Request("https://test", { method: "POST", headers: { "Idempotency-Key": "test-payment-key-000001" } }), env, order.orderId, "gongxin") as any;
+    expect(duplicate.id).toBe(payment.id);
+    expect((await confirmPayment(env,payment.id,"2026082412345678901")).status).toBe("CONFIRMED");
+    expect((await confirmPayment(env,payment.id,"2026082412345678901")).status).toBe("CONFIRMED");
+    expect((await env.DB.prepare("SELECT payment_status FROM orders WHERE id=?1").bind(order.orderId).first<any>())?.payment_status).toBe("PAID");
+    expect((await env.DB.prepare("SELECT COUNT(*) count FROM payment_events WHERE event_type='CONFIRM_CALLBACK'").first<any>())?.count).toBe(1);
+    expect(calls).toBe(2);
+    globalThis.fetch = originalFetch;
+  });
+});
+
 beforeEach(async () => {
   await env.DB.batch([
     env.DB.prepare("DELETE FROM payment_events"),
@@ -38,6 +61,13 @@ beforeEach(async () => {
 });
 
 describe("campaign API", () => {
+  it("allows a public payment campaign without a campaign token", async () => {
+    await seedCampaign();
+    await env.DB.prepare("UPDATE campaigns SET public_access=1 WHERE id='gongxin'").run();
+    const response = await SELF.fetch("https://groupbuy-api.kennygcake.com/v1/campaigns/gongxin");
+    expect(response.status).toBe(200);
+  });
+
   it("returns only campaign catalog and PAID aggregate data", async () => {
     await seedCampaign();
     await env.DB.prepare("INSERT INTO orders (id, campaign_id, company_name_snapshot, customer_name, phone, total_quantity, total_amount, payment_method, payment_status, created_at, updated_at) VALUES ('paid', 'gongxin', '公信電子', 'Private Name', '0911111111', 2, 170, 'LINE_PAY', 'PAID', '2026-08-24', '2026-08-24'), ('pending', 'gongxin', '公信電子', 'Other Name', '0922222222', 10, 850, 'LINE_PAY', 'PENDING', '2026-08-24', '2026-08-24')").run();
@@ -59,6 +89,34 @@ describe("campaign API", () => {
 });
 
 describe("pending order API", () => {
+  it("applies cross-flavor bundle pricing on the server and keeps item subtotals consistent", async () => {
+    await seedCampaign();
+    await env.DB.prepare("UPDATE campaigns SET bundle_quantity=2,bundle_price=150 WHERE id='gongxin'").run();
+    const response = await campaignRequest("/v1/campaigns/gongxin/orders", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customerName: "測試", phone: "0912345678", items: [{ productId: "original", quantity: 1 }, { productId: "matcha", quantity: 2 }] }) });
+    expect(response.status).toBe(201);
+    const body = await response.json() as any;
+    expect(body).toMatchObject({ totalQuantity: 3, totalAmount: 235 });
+    const sum = await env.DB.prepare("SELECT SUM(subtotal) total FROM order_items WHERE order_id=?1").bind(body.orderId).first<{total:number}>();
+    expect(Number(sum?.total)).toBe(235);
+  });
+
+  it("keeps NT$1 top-up orders as TEST and rejects mixing with official products", async () => {
+    await seedCampaign();
+    await env.DB.batch([
+      env.DB.prepare("UPDATE campaigns SET bundle_quantity=2,bundle_price=150 WHERE id='gongxin'"),
+      env.DB.prepare("INSERT INTO products(id,name,image_url,active,created_at,updated_at,is_test) VALUES('topup','補款 NT$1','/none',1,'2026-08-24','2026-08-24',1)"),
+      env.DB.prepare("INSERT INTO campaign_products(campaign_id,product_id,unit_price,display_order,active) VALUES('gongxin','topup',1,99,1)"),
+    ]);
+    let response = await campaignRequest("/v1/campaigns/gongxin/orders", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customerName: "測試", phone: "0912345678", items: [{ productId: "topup", quantity: 2 }] }) });
+    expect(response.status).toBe(201);
+    const topup = await response.json() as any;
+    expect(topup.totalAmount).toBe(2);
+    expect((await env.DB.prepare("SELECT is_test FROM orders WHERE id=?1").bind(topup.orderId).first<any>())?.is_test).toBe(1);
+    response = await campaignRequest("/v1/campaigns/gongxin/orders", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customerName: "測試", phone: "0912345678", items: [{ productId: "topup", quantity: 1 }, { productId: "original", quantity: 1 }] }) });
+    expect(response.status).toBe(422);
+    expect(await response.json()).toMatchObject({ error: { code: "TEST_ITEM_MIXED" } });
+  });
+
   it("recalculates totals from D1 prices and persists PENDING order atomically", async () => {
     await seedCampaign();
     const response = await campaignRequest("/v1/campaigns/gongxin/orders", {

@@ -12,6 +12,11 @@ export default defineConfig({
         bindings: {
           CAMPAIGN_TOKEN_PEPPER: "phase-two-test-pepper-value-with-at-least-32-characters",
           ALLOWED_ORIGINS: "https://kennygcake.com,http://127.0.0.1:4173",
+          LINE_PAY_CHANNEL_ID: "sandbox-test-channel",
+          LINE_PAY_CHANNEL_SECRET: "sandbox-test-secret-not-for-production",
+          LINE_PAY_API_BASE_URL: "https://sandbox-api-pay.line.me",
+          PAYMENT_ENABLED_CAMPAIGNS: "gongxin",
+          PUBLIC_API_BASE_URL: "https://groupbuy-api.kennygcake.com",
           TEST_MIGRATIONS: migrations,
         },
       },

@@ -9,11 +9,14 @@ const validCampaignId = (value: string) => {
   return value;
 };
 
-async function authorizeCampaign(request: Request, env: Env, rawId: string) {
+export async function authorizeCampaign(request: Request, env: Env, rawId: string) {
   const id = validCampaignId(rawId);
-  const token = extractCampaignToken(request);
   const campaign = await getCampaign(env.DB, id);
-  if (!campaign || !await verifyCampaignToken(id, token, env.CAMPAIGN_TOKEN_PEPPER, campaign.access_token_digest)) throw new ApiError(404, "CAMPAIGN_NOT_FOUND", "Campaign was not found");
+  if (!campaign) throw new ApiError(404, "CAMPAIGN_NOT_FOUND", "Campaign was not found");
+  if (campaign.public_access !== 1) {
+    const token = extractCampaignToken(request);
+    if (!await verifyCampaignToken(id, token, env.CAMPAIGN_TOKEN_PEPPER, campaign.access_token_digest)) throw new ApiError(404, "CAMPAIGN_NOT_FOUND", "Campaign was not found");
+  }
   return campaign;
 }
 
@@ -41,6 +44,7 @@ export async function campaignView(request: Request, env: Env, campaignId: strin
     deliveryFee: campaign.delivery_fee,
     freeDeliveryThreshold: campaign.free_delivery_threshold,
     note: campaign.note,
+    bundlePricing: campaign.bundle_quantity && campaign.bundle_price !== null ? { quantity: campaign.bundle_quantity, price: campaign.bundle_price } : null,
     products: products.map((product) => ({ id: product.id, name: product.name, imageUrl: product.image_url, unitPrice: Number(product.unit_price), active: true })),
     paidAmount: progress.paidAmount,
     progress: { ...progress, thresholdReached: progress.paidAmount >= campaign.free_delivery_threshold, remainingAmount: Math.max(0, campaign.free_delivery_threshold - progress.paidAmount) },

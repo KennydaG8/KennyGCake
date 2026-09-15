@@ -29,10 +29,16 @@ export function validateOrderBody(body: CreateOrderBody) {
     return { productId: raw.productId, quantity: Number(raw.quantity) };
   });
   const phone = text(body.phone, "phone", true, 20)!;
-  if (!/^09\d{8}$/.test(phone.replace(/[\s-]/g, ""))) throw new ApiError(422, "INVALID_ORDER", "Invalid Taiwan mobile number");
+  const compactPhone = phone.replace(/[\s-]/g, "");
+  const normalizedPhone = /^09\d{8}$/.test(compactPhone)
+    ? compactPhone
+    : /^\+8869\d{8}$/.test(compactPhone)
+      ? `0${compactPhone.slice(4)}`
+      : null;
+  if (!normalizedPhone) throw new ApiError(422, "INVALID_ORDER", "Invalid Taiwan mobile number");
   return {
     customerName: text(body.customerName, "customerName", true, 50)!,
-    phone: phone.replace(/[\s-]/g, ""),
+    phone: normalizedPhone,
     lineName: text(body.lineName, "lineName", false, 80),
     department: text(body.department, "department", false, 80),
     note: text(body.note, "note", false, 300),

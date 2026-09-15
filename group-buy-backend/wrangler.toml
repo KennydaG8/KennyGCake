@@ -11,3 +11,4 @@ migrations_dir = "migrations"
 
 [vars]
 ALLOWED_ORIGINS = "https://kennygcake.com,http://127.0.0.1:4173,http://localhost:4173"
+# Phase 3 remains staging-only. Do not add LINE Pay credentials or a production URL here.

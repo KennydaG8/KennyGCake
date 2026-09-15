@@ -2,6 +2,12 @@ export interface Env {
   DB: D1Database;
   CAMPAIGN_TOKEN_PEPPER: string;
   ALLOWED_ORIGINS: string;
+  LINE_PAY_CHANNEL_ID: string;
+  LINE_PAY_CHANNEL_SECRET: string;
+  LINE_PAY_API_BASE_URL: string;
+  PAYMENT_ENABLED_CAMPAIGNS: string;
+  PUBLIC_API_BASE_URL: string;
+  ASSETS: Fetcher;
 }
 
 export type CampaignStatus = "DRAFT" | "ACTIVE" | "CLOSED" | "DELIVERED";
@@ -21,6 +27,10 @@ export interface CampaignRow {
   delivery_fee: number;
   free_delivery_threshold: number;
   note: string;
+  is_test: number;
+  bundle_quantity: number | null;
+  bundle_price: number | null;
+  public_access: number;
 }
 
 export interface ProductRow {
@@ -28,6 +38,7 @@ export interface ProductRow {
   name: string;
   image_url: string;
   unit_price: number;
+  is_test: number;
 }
 
 export interface CreateOrderBody {

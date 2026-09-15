@@ -6,6 +6,11 @@
   "scripts": {
     "check": "tsc --noEmit",
     "dev": "wrangler dev --local",
+    "seed:staging": "node scripts/seed-staging-campaign.mjs",
+    "smoke:staging": "node scripts/remote-smoke-staging.mjs",
+    "seed:production-test": "node scripts/seed-production-gongxin-test.mjs",
+    "e2e:production:start": "node scripts/production-e2e-start.mjs",
+    "e2e:production:verify": "node scripts/production-e2e-verify.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "token": "node scripts/generate-campaign-token.mjs"
@@ -13,6 +18,7 @@
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.22.0",
     "@cloudflare/workers-types": "^5.20260823.1",
+    "@napi-rs/keyring": "^1.3.0",
     "typescript": "^5.9.2",
     "vitest": "^4.1.11",
     "wrangler": "^4.125.0"
