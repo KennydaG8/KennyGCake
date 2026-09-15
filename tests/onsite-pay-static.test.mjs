@@ -7,7 +7,7 @@ const script = fs.readFileSync(new URL("../pay/pay.js", import.meta.url), "utf8"
 
 test("onsite payment page does not collect personal data", () => {
   assert.doesNotMatch(html, /name="customerName"|name="phone"|name="note"/);
-  assert.match(html, /不蒐集姓名、手機或其他個人資料/);
+  assert.doesNotMatch(html, /姓名|手機|個人資料/);
 });
 
 test("onsite payment creates an anonymous order", () => {
