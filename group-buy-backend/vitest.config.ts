@@ -17,6 +17,7 @@ export default defineConfig({
           LINE_PAY_API_BASE_URL: "https://sandbox-api-pay.line.me",
           PAYMENT_ENABLED_CAMPAIGNS: "gongxin",
           PUBLIC_API_BASE_URL: "https://groupbuy-api.kennygcake.com",
+          ONSITE_GAME_PASSCODE: "1234",
           TEST_MIGRATIONS: migrations,
         },
       },

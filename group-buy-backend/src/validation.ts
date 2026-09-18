@@ -42,6 +42,7 @@ export function validateOrderBody(body: CreateOrderBody) {
     lineName: text(body.lineName, "lineName", false, 80),
     department: text(body.department, "department", false, 80),
     note: text(body.note, "note", false, 300),
+    gamePasscode: text(body.gamePasscode, "gamePasscode", false, 12),
     items,
   };
 }

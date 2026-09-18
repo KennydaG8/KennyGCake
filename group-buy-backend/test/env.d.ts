@@ -9,6 +9,7 @@ declare global {
       LINE_PAY_API_BASE_URL: string;
       PAYMENT_ENABLED_CAMPAIGNS: string;
       PUBLIC_API_BASE_URL: string;
+      ONSITE_GAME_PASSCODE: string;
       TEST_MIGRATIONS: D1Migration[];
       ASSETS: Fetcher;
     }

@@ -15,7 +15,7 @@ export async function getProgress(db: D1Database, campaignId: string) {
   return { paidOrderCount: Number(row?.paid_order_count || 0), paidQuantity: Number(row?.paid_quantity || 0), paidAmount: Number(row?.paid_amount || 0) };
 }
 
-export async function calculateOrder(db: D1Database, campaignId: string, requested: RequestedItem[]) {
+export async function calculateOrder(db: D1Database, campaignId: string, requested: RequestedItem[], gamePass = false) {
   const [catalog, pricing] = await Promise.all([
     getCampaignProducts(db, campaignId),
     db.prepare("SELECT bundle_quantity, bundle_price FROM campaigns WHERE id=?1").bind(campaignId).first<{bundle_quantity:number|null;bundle_price:number|null}>(),
@@ -34,7 +34,11 @@ export async function calculateOrder(db: D1Database, campaignId: string, request
   const bundleQuantity = Number(pricing?.bundle_quantity || 0);
   const bundlePrice = Number(pricing?.bundle_price ?? -1);
   let discount = 0;
-  if (!hasTestItems && bundleQuantity >= 2 && bundlePrice >= 0) {
+  if (gamePass && hasTestItems) throw new ApiError(422, "GAME_PASS_NOT_APPLICABLE", "Game pass cannot be used for top-up items");
+  if (gamePass && !hasTestItems) {
+    const targetAmount = totalQuantity === 1 ? 75 : totalQuantity * 70;
+    discount = Math.max(0, baseAmount - targetAmount);
+  } else if (!hasTestItems && bundleQuantity >= 2 && bundlePrice >= 0) {
     const unitPrices = new Set(items.map((item) => item.unitPrice));
     if (unitPrices.size !== 1) throw new Error("Bundle pricing requires one catalog unit price");
     const unitPrice = items[0]?.unitPrice || 0;

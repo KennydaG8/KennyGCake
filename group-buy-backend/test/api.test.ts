@@ -16,6 +16,16 @@ async function seedCampaign(options: { status?: string; deadline?: string | null
   ]);
 }
 
+async function seedOnsiteCampaign() {
+  await seedCampaign();
+  const now = "2026-09-18T00:00:00.000Z";
+  const digest = await campaignTokenDigest("onsite-pay", TOKEN, env.CAMPAIGN_TOKEN_PEPPER);
+  await env.DB.batch([
+    env.DB.prepare("INSERT INTO campaigns (id, company_name, campaign_name, visibility, status, access_token_digest, delivery_method, delivery_fee, free_delivery_threshold, note, created_at, updated_at, bundle_quantity, bundle_price, public_access) VALUES ('onsite-pay', 'KennyG Cake', '現場付款', 'UNLISTED', 'ACTIVE', ?1, '現場付款', 0, 0, '', ?2, ?2, 2, 150, 1)").bind(digest, now),
+    env.DB.prepare("INSERT INTO campaign_products (campaign_id, product_id, unit_price, display_order, active) VALUES ('onsite-pay', 'original', 85, 1, 1), ('onsite-pay', 'matcha', 85, 2, 1), ('onsite-pay', 'chocolate', 85, 3, 1)"),
+  ]);
+}
+
 function campaignRequest(path: string, init: RequestInit = {}) {
   const headers = new Headers(init.headers);
   headers.set("Authorization", `Campaign ${TOKEN}`);
@@ -103,6 +113,31 @@ describe("campaign API", () => {
 });
 
 describe("pending order API", () => {
+  it("applies normal bundle pricing and validates the onsite game passcode", async () => {
+    await seedOnsiteCampaign();
+    const create = (items: Array<{ productId: string; quantity: number }>, gamePasscode?: string) => SELF.fetch("https://groupbuy-api.kennygcake.com/v1/campaigns/onsite-pay/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Origin: "https://kennygcake.com" },
+      body: JSON.stringify({ customerName: "現場顧客", phone: "0900000000", items, gamePasscode }),
+    });
+
+    let response = await create([{ productId: "original", quantity: 2 }]);
+    expect(response.status).toBe(201);
+    expect(await response.json()).toMatchObject({ totalQuantity: 2, totalAmount: 150 });
+
+    response = await create([{ productId: "original", quantity: 1 }], "1234");
+    expect(response.status).toBe(201);
+    expect(await response.json()).toMatchObject({ totalQuantity: 1, totalAmount: 75 });
+
+    response = await create([{ productId: "original", quantity: 1 }, { productId: "matcha", quantity: 2 }], "1234");
+    expect(response.status).toBe(201);
+    expect(await response.json()).toMatchObject({ totalQuantity: 3, totalAmount: 210 });
+
+    response = await create([{ productId: "original", quantity: 1 }], "9999");
+    expect(response.status).toBe(422);
+    expect(await response.json()).toMatchObject({ error: { code: "INVALID_GAME_PASSCODE" } });
+  });
+
   it("applies cross-flavor bundle pricing on the server and keeps item subtotals consistent", async () => {
     await seedCampaign();
     await env.DB.prepare("UPDATE campaigns SET bundle_quantity=2,bundle_price=150 WHERE id='gongxin'").run();
