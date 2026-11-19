@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="KennyG Cake 企業同仁專屬訂購">
+  <title>同仁專屬訂購｜KennyG Cake</title>
+  <link rel="icon" href="../images/kennyg-logo.png">
+  <link rel="stylesheet" href="order.css">
+</head>
+<body>
+<div class="page-shell">
+  <header class="top">
+    <a class="brand" href="../"><img src="../images/kennyg-logo.png" alt="" width="44" height="44"><span><strong>KennyG Cake</strong><small>企業同仁專屬</small></span></a>
+    <span class="badge">專屬連結</span>
+  </header>
+
+  <main>
+    <section id="invalid-state" class="card centered" hidden>
+      <h1>連結無效</h1>
+      <p>這是企業專屬的訂購頁，請使用公司提供的完整連結。</p>
+    </section>
+
+    <div id="order-view" hidden>
+      <section class="hero card">
+        <p class="eyebrow">Employee order</p>
+        <h1><span id="company-name"></span><br>同仁專屬訂購</h1>
+        <ul class="perks">
+          <li><strong id="unit-price"></strong><span>每顆（原價 <s id="base-price"></s>）</span></li>
+          <li><strong>滿 <span class="min-qty"></span> 顆</strong><span>親自冷藏送到公司</span></li>
+          <li><strong>3 個工作天</strong><span>內送達，可指定時段</span></li>
+        </ul>
+        <p class="hint">同仁可以合併訂購，一起湊滿 <span class="min-qty"></span> 顆，在備註寫上每個人的數量即可。</p>
+      </section>
+
+      <form id="order-form" novalidate>
+        <section class="card">
+          <h2>1. 選擇口味</h2>
+          <div id="product-list" class="products"></div>
+          <div class="summary" aria-live="polite">
+            <span>共 <strong id="total-qty">0</strong> 顆</span>
+            <strong id="total-amount">NT$0</strong>
+          </div>
+          <p id="qty-note" class="qty-note"></p>
+        </section>
+
+        <section class="card">
+          <h2>2. 訂購人與送達資訊</h2>
+          <div class="fields">
+            <label>姓名<input name="name" autocomplete="name" required maxlength="40"></label>
+            <label>手機<input name="phone" type="tel" inputmode="tel" autocomplete="tel" required maxlength="20" placeholder="09xx-xxx-xxx"></label>
+            <label>部門／分機 <small>選填</small><input name="department" maxlength="60"></label>
+            <label>Email <small>選填，用於訂單確認</small><input name="email" type="email" autocomplete="email" maxlength="120"></label>
+            <label>送達日期<input name="date" type="date" required></label>
+            <label>送達時段<select name="slot" required id="slot-select"></select></label>
+            <label class="wide">送達地點<input name="address" required maxlength="120"></label>
+            <label class="wide">備註 <small>合購請寫上每位同仁的姓名與數量</small><textarea name="note" rows="3" maxlength="500"></textarea></label>
+            <label class="trap" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
+          </div>
+          <p class="pay-note">付款方式：送達時付款（現金或轉帳）。收到訂單後，Kenny 會以電話或簡訊和您確認。</p>
+          <p id="form-message" class="form-message" role="alert"></p>
+          <button id="submit-button" type="submit" disabled>送出訂單</button>
+        </section>
+      </form>
+    </div>
+
+    <section id="done-state" class="card centered" hidden>
+      <p class="eyebrow">Thank you</p>
+      <h1>訂單已送出</h1>
+      <p id="done-summary"></p>
+      <p>Kenny 會盡快以電話或簡訊和您確認。<br>收到蛋糕後請冷藏，建議 3 天內享用。</p>
+    </section>
+  </main>
+
+  <footer class="foot">KennyG Cake · 2 吋個人份巴斯克乳酪蛋糕</footer>
+</div>
+<script type="module" src="order.js"></script>
+</body>
+</html>
