@@ -8,7 +8,7 @@ ON CONFLICT(campaign_id, product_id) DO UPDATE SET
   active = 1;
 
 UPDATE campaigns
-SET bundle_quantity = 2,
-    bundle_price = 150,
+SET bundle_quantity = NULL,
+    bundle_price = NULL,
     updated_at = datetime('now')
 WHERE id = 'onsite-pay';
