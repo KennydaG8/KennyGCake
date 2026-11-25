@@ -1,3 +1,4 @@
+import { validateDelivery } from "./delivery";
 import { ApiError, readJson } from "./http";
 import { calculateOrder, getCampaign, getCampaignProducts, getProgress, persistPendingOrder } from "./repository";
 import { extractCampaignToken, verifyCampaignToken } from "./security";
@@ -75,15 +76,18 @@ export async function createPendingOrder(request: Request, env: Env, campaignId:
   const campaign = await authorizeCampaign(request, env, campaignId);
   if (campaign.status !== "ACTIVE") throw new ApiError(409, "CAMPAIGN_NOT_ACTIVE", "Campaign does not accept new orders");
   if (isDeadlinePassed(campaign.order_deadline, new Date())) throw new ApiError(409, "CAMPAIGN_CLOSED", "Campaign deadline has passed");
-  const customer = validateOrderBody(await readJson(request));
+  const body = await readJson(request);
+  const customer = validateOrderBody(body);
+  const delivery = campaign.requires_delivery === 1 ? validateDelivery(body, new Date()) : null;
   const gamePass = customer.gamePasscode !== null;
   if (gamePass && (campaign.id !== "onsite-pay" || !await validGamePasscode(customer.gamePasscode!, env.ONSITE_GAME_PASSCODE))) {
     throw new ApiError(422, "INVALID_GAME_PASSCODE", "Game passcode is invalid");
   }
   const calculated = await calculateOrder(env.DB, campaign.id, customer.items, gamePass);
+  if (calculated.totalQuantity < campaign.min_quantity) throw new ApiError(422, "BELOW_MINIMUM", "Order is below the minimum quantity");
   const { gamePasscode: _discardedPasscode, ...persistedCustomer } = customer;
   const orderId = `KGC-${crypto.randomUUID().replaceAll("-", "").slice(0, 20).toUpperCase()}`;
   const now = new Date().toISOString();
-  await persistPendingOrder(env.DB, { id: orderId, campaignId: campaign.id, companyName: campaign.company_name, ...persistedCustomer, ...calculated, now });
+  await persistPendingOrder(env.DB, { id: orderId, campaignId: campaign.id, companyName: campaign.company_name, ...persistedCustomer, ...calculated, now, delivery });
   return { orderId, campaignId: campaign.id, paymentStatus: "PENDING", paymentMethod: "LINE_PAY", totalQuantity: calculated.totalQuantity, totalAmount: calculated.totalAmount, items: calculated.items, createdAt: now };
 }

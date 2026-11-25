@@ -1,7 +1,7 @@
 import { ApiError } from "./http";
 import type { CreateOrderBody, RequestedItem } from "./types";
 
-const text = (value: unknown, field: string, required: boolean, max: number): string | null => {
+export const text = (value: unknown, field: string, required: boolean, max: number): string | null => {
   if (value === undefined || value === null || value === "") {
     if (required) throw new ApiError(422, "INVALID_ORDER", `${field} is required`);
     return null;
@@ -41,7 +41,7 @@ export function validateOrderBody(body: CreateOrderBody) {
     phone: normalizedPhone,
     lineName: text(body.lineName, "lineName", false, 80),
     department: text(body.department, "department", false, 80),
-    note: text(body.note, "note", false, 300),
+    note: text(body.note, "note", false, 500),
     gamePasscode: text(body.gamePasscode, "gamePasscode", false, 12),
     items,
   };

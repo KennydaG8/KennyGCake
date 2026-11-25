@@ -18,4 +18,10 @@ migrations_dir = "migrations"
 ALLOWED_ORIGINS = "https://kennygcake.com"
 PUBLIC_API_BASE_URL = "https://kennygcake-group-buy-api-production.kennygcake-group-buy-backend.workers.dev"
 LINE_PAY_API_BASE_URL = "https://api-pay.line.me"
-PAYMENT_ENABLED_CAMPAIGNS = "gongxin,onsite-pay"
+PAYMENT_ENABLED_CAMPAIGNS = "gongxin,onsite-pay,bigdata"
+# Company order page. ORDER_NOTIFY_SECRET is a Worker secret; it must equal the PAID_SECRET script property in Apps Script.
+ORDER_PAGE_URL = "https://kennygcake.com/order/"
+ORDER_NOTIFY_URL = "https://script.google.com/macros/s/AKfycbw2Kiu6Bp3odWZkNVEFexEdSh0pynd1fj5pU29W7okjvJJH-6Zi3Uua1Fxkfl-1mJky/exec"
+
+[triggers]
+crons = ["*/10 * * * *"]

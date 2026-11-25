@@ -43,6 +43,11 @@ h2{margin-bottom:16px;font-size:1.15rem}
 .fields input,.fields select,.fields textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;font-weight:400}
 .fields input:focus,.fields select:focus,.fields textarea:focus{outline:2px solid var(--caramel);outline-offset:1px}
 .trap{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.pay-methods{display:flex;flex-wrap:wrap;gap:8px 20px;margin:16px 0 0;padding:0;border:0}
+.pay-methods[hidden]{display:none}
+.pay-methods legend{margin-bottom:6px;padding:0;font-size:.9rem;font-weight:700}
+.pay-methods label{display:flex;align-items:center;gap:8px;min-height:44px;font-size:.95rem;cursor:pointer}
+.pay-methods input{width:18px;height:18px;accent-color:var(--caramel)}
 .pay-note{margin:16px 0 8px;color:var(--muted);font-size:.88rem}
 .form-message{min-height:1.4em;margin:0 0 8px;color:var(--danger);font-size:.9rem}
 #submit-button{width:100%;padding:14px;border:0;border-radius:999px;background:var(--cocoa);color:#fff;font-weight:800;font-size:1.05rem;cursor:pointer}

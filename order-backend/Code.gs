@@ -24,7 +24,14 @@ function doPost(e) {
     const d = JSON.parse((e && e.postData && e.postData.contents) || '{}');
     if (d.website) return json_({ ok: true, orderId: 'IGNORED' }); // honeypot filled = bot
 
+    // Only the LINE Pay Worker knows PAID_SECRET (script property). Anyone can post to this URL,
+    // so an order counts as paid only with the right secret.
+    const secret = PropertiesService.getScriptProperties().getProperty('PAID_SECRET');
+    const paid = Boolean(d.paidSecret);
+    if (paid && (!secret || secret.length < 32 || d.paidSecret !== secret)) return json_({ ok: false, error: 'FORBIDDEN' });
+
     const str = (v, max) => String(v == null ? '' : v).trim().slice(0, max);
+    const cell = (v, max) => str(v, max).replace(/^([=+\-@])/, "'$1"); // never run customer text as a formula
     const companyCode = str(d.companyCode, 40).toLowerCase();
     const companyName = str(d.companyName, 80);
     const name = str(d.name, 40);
@@ -42,23 +49,32 @@ function doPost(e) {
       }
     });
     const totalQty = qty.original + qty.matcha + qty.chocolate;
-    if (totalQty < MIN_QTY) return json_({ ok: false, error: 'BELOW_MINIMUM' });
+    if (!paid && totalQty < MIN_QTY) return json_({ ok: false, error: 'BELOW_MINIMUM' });
 
-    // Prices are recalculated here; the page's numbers are not trusted.
-    const unitPrice = UNIT_PRICES[companyCode] || DEFAULT_UNIT_PRICE;
-    const amount = totalQty * unitPrice;
+    // Unpaid orders: prices are recalculated here; the page's numbers are not trusted.
+    // Paid orders: the Worker sends the amount LINE Pay really charged.
+    const unitPrice = paid ? Number((d.items[0] || {}).unitPrice) || 0 : (UNIT_PRICES[companyCode] || DEFAULT_UNIT_PRICE);
+    const amount = paid ? Number(d.totalAmount) || 0 : totalQty * unitPrice;
+    const status = paid ? '已付款 LINE Pay' : (d.payment === 'CASH' ? '現場收現金' : '新訂單');
 
     const lock = LockService.getScriptLock();
     lock.waitLock(10000);
     let orderId;
     try {
       const now = new Date();
-      orderId = 'KG' + Utilities.formatDate(now, 'Asia/Taipei', 'yyMMdd-HHmmss');
+      orderId = paid ? str(d.orderId, 40) : 'KG' + Utilities.formatDate(now, 'Asia/Taipei', 'yyMMdd-HHmmss');
       const sheet = sheet_();
-      sheet.appendRow([orderId, Utilities.formatDate(now, 'Asia/Taipei', 'yyyy-MM-dd HH:mm'), companyCode, companyName,
-        name, "'" + phone, str(d.department, 60), str(d.email, 120), qty.original, qty.matcha, qty.chocolate,
-        totalQty, unitPrice, amount, date, str(d.slot, 20), address, str(d.note, 500), '新訂單']);
-      Utilities.sleep(1100); // keeps second-based order IDs unique under the lock
+      if (paid) {
+        // The Worker retries until it hears back, so the same order can arrive twice.
+        const last = sheet.getLastRow();
+        const ids = last > 1 ? sheet.getRange(2, 1, last - 1, 1).getValues() : [];
+        if (!orderId) return json_({ ok: false, error: 'MISSING_FIELDS' });
+        if (ids.some(function (r) { return r[0] === orderId; })) return json_({ ok: true, paid: true, orderId: orderId, duplicate: true });
+      }
+      sheet.appendRow([orderId, Utilities.formatDate(now, 'Asia/Taipei', 'yyyy-MM-dd HH:mm'), cell(companyCode, 40), cell(companyName, 80),
+        cell(name, 40), "'" + phone, cell(d.department, 60), cell(d.email, 120), qty.original, qty.matcha, qty.chocolate,
+        totalQty, unitPrice, amount, date, cell(d.slot, 20), cell(address, 120), cell(d.note, 500), status]);
+      if (!paid) Utilities.sleep(1100); // keeps second-based order IDs unique under the lock
     } finally {
       lock.releaseLock();
     }
@@ -66,6 +82,7 @@ function doPost(e) {
     const flavors = Object.keys(PRODUCTS).filter(function (k) { return qty[k]; })
       .map(function (k) { return PRODUCTS[k] + ' ' + qty[k] + ' 顆'; }).join('、');
     const body = [
+      '付款：' + status,
       '訂單編號：' + orderId,
       '公司：' + companyName + '（' + companyCode + '）',
       '訂購人：' + name + '　手機：' + phone,
@@ -80,13 +97,18 @@ function doPost(e) {
       '',
       '訂單表：' + ss_().getUrl(),
     ].join('\n');
-    MailApp.sendEmail({
-      to: Session.getEffectiveUser().getEmail(),
-      subject: '【企業訂單】' + companyName + '｜' + name + '｜' + totalQty + ' 顆｜' + date,
-      body: body,
-    });
+    try {
+      MailApp.sendEmail({
+        to: Session.getEffectiveUser().getEmail(),
+        subject: '【企業訂單】' + status + '｜' + companyName + '｜' + name + '｜' + totalQty + ' 顆｜' + date,
+        body: body,
+      });
+    } catch (mailError) {
+      // The row is already saved; reporting failure would make the customer or the Worker send it again.
+      console.error('order email failed: ' + orderId + ' ' + mailError);
+    }
 
-    return json_({ ok: true, orderId: orderId });
+    return json_({ ok: true, paid: paid, orderId: orderId });
   } catch (err) {
     return json_({ ok: false, error: 'SERVER_ERROR' });
   }

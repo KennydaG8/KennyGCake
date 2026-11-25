@@ -10,6 +10,9 @@ declare global {
       PAYMENT_ENABLED_CAMPAIGNS: string;
       PUBLIC_API_BASE_URL: string;
       ONSITE_GAME_PASSCODE: string;
+      ORDER_PAGE_URL: string;
+      ORDER_NOTIFY_URL: string;
+      ORDER_NOTIFY_SECRET: string;
       TEST_MIGRATIONS: D1Migration[];
       ASSETS: Fetcher;
     }

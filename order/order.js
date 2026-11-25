@@ -4,6 +4,9 @@
 // Google Apps Script web app URL (see order/apps-script/README.md).
 const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbw2Kiu6Bp3odWZkNVEFexEdSh0pynd1fj5pU29W7okjvJJH-6Zi3Uua1Fxkfl-1mJky/exec";
 
+// LINE Pay orders go to the group-buy Worker (group-buy-backend/). The campaign ID is the company code.
+const PAY_API = "https://kennygcake-group-buy-api-production.kennygcake-group-buy-backend.workers.dev/v1/campaigns";
+
 const BASE_PRICE = 85;
 const DEFAULT_UNIT_PRICE = 76; // 9 折，85 × 0.9 取整數
 const MIN_QTY = 12;
@@ -14,6 +17,7 @@ const COMPANIES = {
   bigdata: {
     name: "大數據股份有限公司",
     address: "台北市民生東路二段145號5樓",
+    linePay: true, // needs a campaign with the same code and price in the Worker
   },
 };
 
@@ -30,6 +34,10 @@ const company = Object.hasOwn(COMPANIES, code) ? COMPANIES[code] : null;
 const unitPrice = company?.unitPrice ?? DEFAULT_UNIT_PRICE;
 const quantities = Object.fromEntries(PRODUCTS.map((p) => [p.id, 0]));
 const form = $("#order-form");
+const MAX_PER_FLAVOR = 99;
+const DRAFT_KEY = `kennyg-order-${code}`;
+const payMethod = () => (company?.linePay ? form.elements.payment.value : "ON_DELIVERY");
+const submitLabel = () => (payMethod() === "LINE_PAY" ? "前往 LINE Pay 付款" : "送出訂單");
 
 const pad = (n) => String(n).padStart(2, "0");
 const isoDate = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
@@ -67,6 +75,8 @@ function refresh() {
   $("#submit-button").disabled = qty < MIN_QTY;
 }
 
+const setters = {};
+
 function renderProducts() {
   const cards = PRODUCTS.map((p) => {
     const el = document.createElement("article");
@@ -76,7 +86,7 @@ function renderProducts() {
       <div><h3></h3><p></p></div>
       <div class="qty">
         <button type="button" data-step="-1" aria-label="減少">−</button>
-        <input type="number" inputmode="numeric" min="0" max="200" value="0">
+        <input type="number" inputmode="numeric" min="0" max="${MAX_PER_FLAVOR}" value="0">
         <button type="button" data-step="1" aria-label="增加">+</button>
       </div>`;
     el.querySelector("img").src = p.image;
@@ -86,13 +96,14 @@ function renderProducts() {
     input.setAttribute("aria-label", `${p.name}數量`);
     const minus = el.querySelector('[data-step="-1"]');
     const set = (n) => {
-      quantities[p.id] = Math.max(0, Math.min(200, Number.isFinite(n) ? Math.trunc(n) : 0));
+      quantities[p.id] = Math.max(0, Math.min(MAX_PER_FLAVOR, Number.isFinite(n) ? Math.trunc(n) : 0));
       input.value = quantities[p.id];
       minus.disabled = quantities[p.id] === 0;
       refresh();
     };
     el.querySelectorAll("button").forEach((b) => (b.onclick = () => set(quantities[p.id] + Number(b.dataset.step))));
     input.addEventListener("input", () => set(Number(input.value)));
+    setters[p.id] = set;
     set(0);
     return el;
   });
@@ -112,7 +123,7 @@ function setupFields() {
 function validate(data) {
   if (totalQty() < MIN_QTY) return `最少 ${MIN_QTY} 顆。`;
   if (!data.name) return "請填寫姓名。";
-  if (!/^[0-9+\-\s()]{8,20}$/.test(data.phone)) return "請填寫正確的手機號碼。";
+  if (!/^(09|\+8869)\d{8}$/.test(data.phone.replace(/[\s-]/g, ""))) return "請填寫正確的手機號碼。";
   if (!data.date) return "請選擇送達日期。";
   const [y, m, d] = data.date.split("-").map(Number);
   const picked = new Date(y, m - 1, d);
@@ -120,6 +131,114 @@ function validate(data) {
   if (picked < earliestDelivery()) return `最快可送達日期是 ${form.elements.date.min}。`;
   if (!data.address) return "請填寫送達地點。";
   return "";
+}
+
+const PAY_NOTES = {
+  LINE_PAY: "付款完成後訂單才成立，Kenny 收到款項後會安排送達。",
+  CASH: "蛋糕送達時以現金付款，請自備零錢。收到訂單後，Kenny 會以電話或簡訊和您確認。",
+};
+
+function refreshPayment() {
+  if (!company.linePay) return;
+  $("#pay-note").textContent = PAY_NOTES[payMethod()];
+  $("#submit-button").textContent = submitLabel();
+}
+
+// The draft only lives in this tab, so the form can be refilled when someone cancels at LINE Pay.
+function saveDraft(data, summary) {
+  try { sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ data, quantities, summary })); } catch { /* private mode */ }
+}
+function readDraft() {
+  try { return JSON.parse(sessionStorage.getItem(DRAFT_KEY)); } catch { return null; }
+}
+function clearDraft() {
+  try { sessionStorage.removeItem(DRAFT_KEY); } catch { /* private mode */ }
+}
+function restoreDraft() {
+  const draft = readDraft();
+  if (!draft) return;
+  for (const [id, n] of Object.entries(draft.quantities || {})) setters[id]?.(Number(n));
+  for (const [k, v] of Object.entries(draft.data || {})) {
+    const field = form.elements[k];
+    if (field && k !== "website" && !(k === "date" && v < field.min)) field.value = v;
+  }
+}
+
+function showDone({ title, summary, next }) {
+  $("#done-title").textContent = title;
+  $("#done-summary").textContent = summary;
+  $("#done-next").textContent = next;
+  $("#order-view").hidden = true;
+  $("#checking-state").hidden = true;
+  $("#done-state").hidden = false;
+  scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function payApi(path, init) {
+  const res = await fetch(`${PAY_API}/${code}${path}`, { cache: "no-store", ...init });
+  const body = await res.json().catch(() => null);
+  if (!res.ok) throw new Error(body?.error?.code || `HTTP_${res.status}`);
+  return body;
+}
+
+async function payWithLine(data, items) {
+  const order = await payApi("/orders", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      customerName: data.name,
+      phone: data.phone,
+      department: data.department,
+      email: data.email,
+      note: data.note,
+      deliveryDate: data.date,
+      deliverySlot: data.slot,
+      deliveryAddress: data.address,
+      items: items.map((i) => ({ productId: i.id, quantity: i.quantity })),
+    }),
+  });
+  // The server sets the price. Stop if this page shows something else.
+  if (order.totalAmount !== totalQty() * unitPrice) throw new Error("PRICE_MISMATCH");
+  const payment = await payApi(`/orders/${encodeURIComponent(order.orderId)}/payments`, {
+    method: "POST",
+    headers: { "Idempotency-Key": crypto.randomUUID().replaceAll("-", "") },
+  });
+  const url = new URL(payment.paymentUrl);
+  if (url.protocol !== "https:" || !/(^|\.)line\.me$/.test(url.hostname)) throw new Error("INVALID_PAYMENT_URL");
+  const lines = items.map((i) => `${i.name} ${i.quantity}`).join("、");
+  saveDraft(data, `訂單編號 ${order.orderId}｜${lines}，共 ${order.totalQuantity} 顆 ${money(order.totalAmount)}｜${data.date} ${data.slot}`);
+  location.assign(url);
+}
+
+// Back from LINE Pay: #pay=done|cancelled|failed&id=PAY-…  The server's status decides, not the link.
+async function handleReturn() {
+  const params = new URLSearchParams(location.hash.slice(1));
+  const result = params.get("pay");
+  const id = params.get("id") || "";
+  if (!company.linePay || !["done", "cancelled", "failed"].includes(result) || !/^PAY-[A-Za-z0-9]{8,40}$/.test(id)) return;
+  history.replaceState(null, "", location.pathname + location.search);
+  $("#order-view").hidden = true;
+  $("#checking-state").hidden = false;
+  let payment = null;
+  for (let i = 0; i < (result === "cancelled" ? 1 : 4); i++) {
+    if (i) await new Promise((r) => setTimeout(r, 2000));
+    payment = await payApi(`/payments/${id}`).catch(() => null);
+    if (payment?.status === "CONFIRMED") break;
+  }
+  if (payment?.status === "CONFIRMED") {
+    const summary = readDraft()?.summary || `訂單編號 ${payment.orderId}`;
+    clearDraft();
+    showDone({ title: "付款完成，訂單已成立", summary, next: "Kenny 會以電話或簡訊和您確認送達時間。" });
+    return;
+  }
+  $("#checking-state").hidden = true;
+  $("#order-view").hidden = false;
+  restoreDraft();
+  refreshPayment();
+  $("#form-message").textContent = result === "cancelled"
+    ? "已取消付款，訂單還沒成立。確認內容後可以重新付款。"
+    : "還沒確認到付款，訂單可能沒有成立。如果 LINE Pay 顯示已付款，請不要重複付款，直接聯絡 Kenny。";
+  $("#submit-button").scrollIntoView({ block: "center" });
 }
 
 async function submit(e) {
@@ -132,6 +251,21 @@ async function submit(e) {
   if (error) return;
 
   const items = PRODUCTS.filter((p) => quantities[p.id] > 0).map((p) => ({ id: p.id, name: p.name, quantity: quantities[p.id] }));
+  if (payMethod() === "LINE_PAY") {
+    if (data.website) return; // honeypot filled = bot
+    const button = $("#submit-button");
+    button.disabled = true;
+    button.textContent = "前往 LINE Pay…";
+    try {
+      await payWithLine(data, items);
+    } catch (err) {
+      msg.textContent = `無法開啟 LINE Pay，還沒有扣款。請稍後再試，或改選現場現金付款。（${err instanceof Error ? err.message : "UNKNOWN"}）`;
+      button.disabled = false;
+      button.textContent = submitLabel();
+    }
+    return;
+  }
+
   const payload = {
     companyCode: code,
     companyName: company.name,
@@ -151,14 +285,16 @@ async function submit(e) {
     const body = await res.json().catch(() => null);
     if (!res.ok || !body?.ok) throw new Error(body?.error || `HTTP_${res.status}`);
     const lines = items.map((i) => `${i.name} ${i.quantity}`).join("、");
-    $("#done-summary").textContent = `訂單編號 ${body.orderId}｜${lines}，共 ${payload.totalQuantity} 顆 ${money(payload.totalAmount)}｜${data.date} ${data.slot}`;
-    $("#order-view").hidden = true;
-    $("#done-state").hidden = false;
-    scrollTo({ top: 0, behavior: "smooth" });
+    clearDraft();
+    showDone({
+      title: "訂單已送出",
+      summary: `訂單編號 ${body.orderId}｜${lines}，共 ${payload.totalQuantity} 顆 ${money(payload.totalAmount)}｜${data.date} ${data.slot}`,
+      next: company.linePay ? "Kenny 會以電話或簡訊和您確認。送達時請以現金付款，並自備零錢。" : "Kenny 會盡快以電話或簡訊和您確認。",
+    });
   } catch (err) {
     msg.textContent = `送出失敗，請稍後再試或直接聯絡 Kenny。（${err instanceof Error ? err.message : "UNKNOWN"}）`;
     button.disabled = false;
-    button.textContent = "送出訂單";
+    button.textContent = submitLabel();
   }
 }
 
@@ -173,5 +309,11 @@ if (!company) {
   renderProducts();
   setupFields();
   form.addEventListener("submit", submit);
+  $("#pay-methods").hidden = !company.linePay;
+  form.querySelectorAll('[name="payment"]').forEach((el) => el.addEventListener("change", refreshPayment));
+  refreshPayment();
+  // Coming back with the browser's back button can leave the button stuck on "前往 LINE Pay…".
+  addEventListener("pageshow", (e) => { if (e.persisted) { refresh(); refreshPayment(); } });
   $("#order-view").hidden = false;
+  handleReturn();
 }

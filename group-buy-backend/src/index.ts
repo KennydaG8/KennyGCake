@@ -1,7 +1,8 @@
 import { ApiError, corsPreflight, json } from "./http";
 import { campaignView, createPendingOrder, progressView } from "./service";
 import { authorizeCampaign } from "./service";
-import { cancelPayment, confirmPayment, paymentStatus, requestPayment } from "./payment";
+import { notifyPaidOrder, sweep } from "./notify";
+import { cancelPayment, confirmPayment, paymentStatus, requestPayment, returnPage, returnRedirect } from "./payment";
 import type { Env } from "./types";
 
 const campaignRoute = /^\/v1\/campaigns\/([a-z0-9][a-z0-9_-]{0,63})$/;
@@ -12,14 +13,29 @@ const paymentStatusRoute = /^\/v1\/campaigns\/([a-z0-9][a-z0-9_-]{0,63})\/paymen
 const paymentCallbackRoute = /^\/v1\/payments\/([A-Za-z0-9_-]{8,80})\/(confirm|cancel)$/;
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     if (request.method === "OPTIONS") return corsPreflight(request, env);
     const url = new URL(request.url);
     if (request.method === "GET" && !url.pathname.startsWith("/v1/") && url.pathname !== "/health") return env.ASSETS.fetch(request);
     try {
       if (request.method === "GET" && url.pathname === "/health") return json(request, env, { status: "ok", service: "kennygcake-group-buy-api" });
       let callback = paymentCallbackRoute.exec(url.pathname);
-      if (request.method === "GET" && callback) return json(request, env, callback[2] === "confirm" ? await confirmPayment(env, callback[1], url.searchParams.get("transactionId")) : await cancelPayment(env, callback[1]));
+      if (request.method === "GET" && callback) {
+        const page = await returnPage(env, callback[1]);
+        if (page) {
+          const confirming = callback[2] === "confirm";
+          try {
+            if (confirming) await confirmPayment(env, callback[1], url.searchParams.get("transactionId"));
+            else await cancelPayment(env, callback[1]);
+          } catch (error) {
+            console.error("Payment callback failed", callback[1], error instanceof Error ? error.message : "unknown");
+            return returnRedirect(env, page.campaignId, "failed", callback[1]);
+          }
+          if (confirming) ctx.waitUntil(notifyPaidOrder(env, page.orderId));
+          return returnRedirect(env, page.campaignId, confirming ? "done" : "cancelled", callback[1]);
+        }
+        return json(request, env, callback[2] === "confirm" ? await confirmPayment(env, callback[1], url.searchParams.get("transactionId")) : await cancelPayment(env, callback[1]));
+      }
       let payment = paymentRequestRoute.exec(url.pathname);
       if (request.method === "POST" && payment) { await authorizeCampaign(request, env, payment[1]); return json(request, env, await requestPayment(request, env, payment[2], payment[1]), 201); }
       payment = paymentStatusRoute.exec(url.pathname);
@@ -37,4 +53,5 @@ export default {
       return json(request, env, { error: { code: "INTERNAL_ERROR", message: "Request could not be completed" } }, 500);
     }
   },
+  async scheduled(_event: ScheduledController, env: Env): Promise<void> { await sweep(env); },
 } satisfies ExportedHandler<Env>;

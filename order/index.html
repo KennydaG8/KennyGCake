@@ -59,7 +59,12 @@
             <label class="wide">備註 <small>冷凍或冷藏出貨、合購請寫上每位同仁的姓名與數量。</small><textarea name="note" rows="3" maxlength="500"></textarea></label>
             <label class="trap" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
           </div>
-          <p class="pay-note">付款方式：送達時付款（現金或轉帳）。收到訂單後，Kenny 會以電話或簡訊和您確認。</p>
+          <fieldset id="pay-methods" class="pay-methods" hidden>
+            <legend>付款方式</legend>
+            <label><input type="radio" name="payment" value="LINE_PAY" checked> LINE Pay</label>
+            <label><input type="radio" name="payment" value="CASH"> 現場現金付款（請自備零錢）</label>
+          </fieldset>
+          <p id="pay-note" class="pay-note">付款方式：送達時以現金付款，請自備零錢。收到訂單後，Kenny 會以電話或簡訊和您確認。</p>
           <p id="form-message" class="form-message" role="alert"></p>
           <button id="submit-button" type="submit" disabled>送出訂單</button>
         </section>
@@ -68,9 +73,14 @@
 
     <section id="done-state" class="card centered" hidden>
       <p class="eyebrow">Thank you</p>
-      <h1>訂單已送出</h1>
+      <h1 id="done-title">訂單已送出</h1>
       <p id="done-summary"></p>
-      <p>Kenny 會盡快以電話或簡訊和您確認。<br>收到蛋糕後請冷藏，建議 3 天內享用。</p>
+      <p><span id="done-next">Kenny 會盡快以電話或簡訊和您確認。</span><br>收到蛋糕後請冷藏，建議 3 天內享用。</p>
+    </section>
+
+    <section id="checking-state" class="card centered" hidden>
+      <h1>確認付款中…</h1>
+      <p>請稍候，先不要關閉這一頁。</p>
     </section>
   </main>
 

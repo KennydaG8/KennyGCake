@@ -31,3 +31,20 @@ The default price is NT$76 for a minimum of 12. To give one company a different 
 
 1. Add `unitPrice` to that company's entry in `order.js`.
 2. Add the same price to `UNIT_PRICES` in `Code.gs`.
+
+## LINE Pay
+
+Companies with `linePay: true` in `order/order.js` can prepay with LINE Pay. The order and payment go to the group-buy Worker (`group-buy-backend/`). After LINE Pay confirms, the Worker posts the paid order to this script, which adds the row (狀態「已付款 LINE Pay」) and sends the email. The Worker retries every 10 minutes until the script accepts it. Cash orders still come straight to this script.
+
+Deploy in this order, so nobody can pay before Kenny can be told:
+
+1. Apps Script: paste the new `Code.gs` (keep the deployed `SPREADSHEET_ID` value), add the script property `PAID_SECRET` (random, at least 32 characters), then publish a new version of the existing deployment.
+2. In `group-buy-backend/`, log in to the Cloudflare account that owns `kennygcake-group-buy-production`, then:
+   - `npx wrangler secret put ORDER_NOTIFY_SECRET -c wrangler.production.toml` (same value as `PAID_SECRET`)
+   - `npx wrangler d1 migrations apply kennygcake-group-buy-production --remote -c wrangler.production.toml`
+   - `npx wrangler deploy -c wrangler.production.toml`
+   - `npx wrangler d1 execute kennygcake-group-buy-production --remote -c wrangler.production.toml --file seeds/production-bigdata.sql`
+   - `npx wrangler d1 execute kennygcake-group-buy-production --remote -c wrangler.production.toml --file seeds/production-onsite-flavors.sql` (removes the two-for-NT$150 offer on `/pay/`)
+3. Push the site, then place one real order and refund it in LINE Pay.
+
+A company's price must match in three places: `order.js`, `UNIT_PRICES` in `Code.gs`, and `campaign_products` in D1. If the page and D1 differ, the page stops before payment.

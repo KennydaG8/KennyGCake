@@ -1,8 +1,9 @@
 import { ApiError } from "./http";
+import type { Delivery } from "./delivery";
 import type { CampaignRow, ProductRow, RequestedItem } from "./types";
 
 export async function getCampaign(db: D1Database, campaignId: string): Promise<CampaignRow | null> {
-  return db.prepare("SELECT id, company_name, campaign_name, visibility, status, access_token_digest, order_deadline, delivery_date, delivery_start_time, delivery_end_time, delivery_method, delivery_fee, free_delivery_threshold, note, is_test, bundle_quantity, bundle_price, public_access FROM campaigns WHERE id = ?1").bind(campaignId).first<CampaignRow>();
+  return db.prepare("SELECT id, company_name, campaign_name, visibility, status, access_token_digest, order_deadline, delivery_date, delivery_start_time, delivery_end_time, delivery_method, delivery_fee, free_delivery_threshold, note, is_test, bundle_quantity, bundle_price, public_access, requires_delivery, min_quantity FROM campaigns WHERE id = ?1").bind(campaignId).first<CampaignRow>();
 }
 
 export async function getCampaignProducts(db: D1Database, campaignId: string): Promise<ProductRow[]> {
@@ -72,12 +73,13 @@ interface PersistOrderInput {
   totalAmount: number;
   items: Array<{ productId: string; name: string; quantity: number; unitPrice: number; subtotal: number; isTest?: boolean }>;
   now: string;
+  delivery: Delivery | null;
 }
 
 export async function persistPendingOrder(db: D1Database, input: PersistOrderInput): Promise<void> {
   const statements = [
-    db.prepare("INSERT INTO orders (id, campaign_id, company_name_snapshot, customer_name, phone, line_name, department, note, total_quantity, total_amount, payment_method, payment_status, created_at, updated_at, is_test) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, 'LINE_PAY', 'PENDING', ?11, ?11, ?12)")
-      .bind(input.id, input.campaignId, input.companyName, input.customerName, input.phone, input.lineName, input.department, input.note, input.totalQuantity, input.totalAmount, input.now, input.isTest),
+    db.prepare("INSERT INTO orders (id, campaign_id, company_name_snapshot, customer_name, phone, line_name, department, note, total_quantity, total_amount, payment_method, payment_status, created_at, updated_at, is_test, email, delivery_date, delivery_slot, delivery_address) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, 'LINE_PAY', 'PENDING', ?11, ?11, ?12, ?13, ?14, ?15, ?16)")
+      .bind(input.id, input.campaignId, input.companyName, input.customerName, input.phone, input.lineName, input.department, input.note, input.totalQuantity, input.totalAmount, input.now, input.isTest, input.delivery?.email ?? null, input.delivery?.date ?? null, input.delivery?.slot ?? null, input.delivery?.address ?? null),
     ...input.items.map((item) => db.prepare("INSERT INTO order_items (order_id, product_id, product_name_snapshot, quantity, unit_price, subtotal) VALUES (?1, ?2, ?3, ?4, ?5, ?6)")
       .bind(input.id, item.productId, item.name, item.quantity, item.unitPrice, item.subtotal)),
   ];

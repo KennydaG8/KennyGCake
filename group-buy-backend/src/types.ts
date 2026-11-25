@@ -9,6 +9,9 @@ export interface Env {
   PUBLIC_API_BASE_URL: string;
   ONSITE_GAME_PASSCODE: string;
   ASSETS: Fetcher;
+  ORDER_PAGE_URL: string;
+  ORDER_NOTIFY_URL: string;
+  ORDER_NOTIFY_SECRET: string;
 }
 
 export type CampaignStatus = "DRAFT" | "ACTIVE" | "CLOSED" | "DELIVERED";
@@ -32,6 +35,8 @@ export interface CampaignRow {
   bundle_quantity: number | null;
   bundle_price: number | null;
   public_access: number;
+  requires_delivery: number;
+  min_quantity: number;
 }
 
 export interface ProductRow {
@@ -49,6 +54,10 @@ export interface CreateOrderBody {
   department?: unknown;
   note?: unknown;
   gamePasscode?: unknown;
+  email?: unknown;
+  deliveryDate?: unknown;
+  deliverySlot?: unknown;
+  deliveryAddress?: unknown;
   items?: unknown;
 }
 

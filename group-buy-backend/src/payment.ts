@@ -1,5 +1,6 @@
 import { ApiError } from "./http";
 import { linePay } from "./line-pay";
+import { markPaid, notifyConfigured } from "./notify";
 import type { Env } from "./types";
 
 type Attempt = { id:string; order_id:string; status:string; provider_transaction_id:string|null; requested_amount:number; expires_at:string|null };
@@ -11,6 +12,9 @@ async function event(env:Env,a:string,type:string,code:string,key:string) { awai
 export async function requestPayment(request:Request,env:Env,orderId:string,campaignId:string) {
   const enabled = new Set((env.PAYMENT_ENABLED_CAMPAIGNS || "").split(",").map(v => v.trim()).filter(Boolean));
   if (!enabled.has(campaignId)) throw new ApiError(403,"PAYMENT_NOT_ENABLED","Payment is not enabled for this campaign");
+  const campaign=await env.DB.prepare("SELECT requires_delivery FROM campaigns WHERE id=?1").bind(campaignId).first<{requires_delivery:number}>();
+  // Never take money for an order Kenny would not be told about.
+  if(campaign?.requires_delivery===1&&!notifyConfigured(env)) throw new ApiError(503,"ORDER_NOTIFICATION_NOT_CONFIGURED","Ordering is temporarily unavailable");
   const key=request.headers.get("Idempotency-Key"); if(!key||!/^[A-Za-z0-9_-]{16,100}$/.test(key)) throw new ApiError(400,"IDEMPOTENCY_KEY_REQUIRED","A valid Idempotency-Key is required");
   const order=await env.DB.prepare("SELECT id,total_amount,payment_status FROM orders WHERE id=?1 AND campaign_id=?2").bind(orderId,campaignId).first<{id:string;total_amount:number;payment_status:string}>();
   if(!order) throw new ApiError(404,"ORDER_NOT_FOUND","Order was not found"); if(order.payment_status==="PAID") throw new ApiError(409,"ORDER_ALREADY_PAID","Order is already paid");
@@ -30,9 +34,10 @@ export async function requestPayment(request:Request,env:Env,orderId:string,camp
 export async function confirmPayment(env:Env,id:string,transactionId:string|null) {
   const a=await attempt(env,id); if(!a||!a.provider_transaction_id||transactionId!==a.provider_transaction_id) throw new ApiError(404,"PAYMENT_NOT_FOUND","Payment was not found");
   if(a.status==="CONFIRMED") return {status:"CONFIRMED",orderId:a.order_id}; if(a.expires_at&&Date.parse(a.expires_at)<=Date.now()) { await env.DB.prepare("UPDATE payment_attempts SET status='EXPIRED',updated_at=?1 WHERE id=?2").bind(now(),id).run(); throw new ApiError(409,"PAYMENT_EXPIRED","Payment attempt expired"); }
+  await event(env,id,"CONFIRM_STARTED","",`confirm-started:${a.provider_transaction_id}`);
   const r=await linePay(env,"POST",`/v3/payments/${a.provider_transaction_id}/confirm`,{amount:a.requested_amount,currency:"TWD"}); await event(env,id,"CONFIRM_CALLBACK",r.returnCode,`confirm:${a.provider_transaction_id}:${r.returnCode}`);
   if(r.returnCode!=="0000") throw new ApiError(409,"LINE_PAY_CONFIRM_FAILED","Payment was not confirmed");
-  await env.DB.batch([env.DB.prepare("UPDATE payment_attempts SET status='CONFIRMED',confirmed_at=?1,updated_at=?1 WHERE id=?2 AND status!='CONFIRMED'").bind(now(),id),env.DB.prepare("UPDATE orders SET payment_status='PAID',paid_at=?1,updated_at=?1 WHERE id=?2 AND payment_status!='PAID'").bind(now(),a.order_id)]); return {status:"CONFIRMED",orderId:a.order_id};
+  await markPaid(env,id,a.order_id); return {status:"CONFIRMED",orderId:a.order_id};
 }
 
 export async function cancelPayment(env:Env,id:string) { const a=await attempt(env,id); if(!a) throw new ApiError(404,"PAYMENT_NOT_FOUND","Payment was not found"); if(a.status==="CONFIRMED") throw new ApiError(409,"PAYMENT_ALREADY_CONFIRMED","Confirmed payment cannot be cancelled here"); await env.DB.batch([env.DB.prepare("UPDATE payment_attempts SET status='CANCELLED',updated_at=?1 WHERE id=?2").bind(now(),id),env.DB.prepare("UPDATE orders SET payment_status='CANCELLED',updated_at=?1 WHERE id=?2 AND payment_status!='PAID'").bind(now(),a.order_id)]); await event(env,id,"CANCEL_CALLBACK","USER_CANCELLED",`cancel:${id}`); return {status:"CANCELLED",orderId:a.order_id}; }
@@ -46,4 +51,14 @@ export async function paymentStatus(env:Env,id:string) {
     if(status) { await env.DB.prepare("UPDATE payment_attempts SET status=?1,provider_return_code=?2,updated_at=?3 WHERE id=?4").bind(status,r.returnCode,now(),id).run(); if(status==="CONFIRMED") await env.DB.prepare("UPDATE orders SET payment_status='PAID',paid_at=?1,updated_at=?1 WHERE id=?2 AND payment_status!='PAID'").bind(now(),a.order_id).run(); }
   }
   a=await attempt(env,id); return {id:a?.id,orderId:a?.order_id,status:a?.status,transactionId:a?.provider_transaction_id,expiresAt:a?.expires_at};
+}
+
+// Delivery campaigns send the customer back to the order page instead of showing JSON.
+export async function returnPage(env:Env,id:string):Promise<{campaignId:string;orderId:string}|null> {
+  if(!/^[A-Za-z0-9_-]{8,80}$/.test(id)||!env.ORDER_PAGE_URL) return null;
+  return env.DB.prepare("SELECT c.id AS campaignId,o.id AS orderId FROM payment_attempts a JOIN orders o ON o.id=a.order_id JOIN campaigns c ON c.id=o.campaign_id WHERE a.id=?1 AND c.requires_delivery=1").bind(id).first<{campaignId:string;orderId:string}>();
+}
+export function returnRedirect(env:Env,campaignId:string,result:"done"|"cancelled"|"failed",attemptId:string):Response {
+  const url=new URL(env.ORDER_PAGE_URL); url.searchParams.set("c",campaignId); url.hash=`pay=${result}&id=${attemptId}`;
+  return new Response(null,{status:303,headers:{Location:url.toString(),"Cache-Control":"no-store","Referrer-Policy":"no-referrer"}});
 }
