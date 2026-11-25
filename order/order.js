@@ -145,8 +145,8 @@ function refreshPayment() {
 }
 
 // The draft only lives in this tab, so the form can be refilled when someone cancels at LINE Pay.
-function saveDraft(data, summary) {
-  try { sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ data, quantities, summary })); } catch { /* private mode */ }
+function saveDraft(data, orderId, summary) {
+  try { sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ data, quantities, orderId, summary })); } catch { /* private mode */ }
 }
 function readDraft() {
   try { return JSON.parse(sessionStorage.getItem(DRAFT_KEY)); } catch { return null; }
@@ -206,7 +206,7 @@ async function payWithLine(data, items) {
   const url = new URL(payment.paymentUrl);
   if (url.protocol !== "https:" || !/(^|\.)line\.me$/.test(url.hostname)) throw new Error("INVALID_PAYMENT_URL");
   const lines = items.map((i) => `${i.name} ${i.quantity}`).join("、");
-  saveDraft(data, `訂單編號 ${order.orderId}｜${lines}，共 ${order.totalQuantity} 顆 ${money(order.totalAmount)}｜${data.date} ${data.slot}`);
+  saveDraft(data, order.orderId, `訂單編號 ${order.orderId}｜${lines}，共 ${order.totalQuantity} 顆 ${money(order.totalAmount)}｜${data.date} ${data.slot}`);
   location.assign(url);
 }
 
@@ -226,8 +226,11 @@ async function handleReturn() {
     if (payment?.status === "CONFIRMED") break;
   }
   if (payment?.status === "CONFIRMED") {
-    const summary = readDraft()?.summary || `訂單編號 ${payment.orderId}`;
-    clearDraft();
+    // The draft may belong to a later order opened in this tab; only use it for the order that was paid.
+    const draft = readDraft();
+    const mine = draft?.orderId === payment.orderId;
+    const summary = mine ? draft.summary : `訂單編號 ${payment.orderId}`;
+    if (mine) clearDraft();
     showDone({ title: "付款完成，訂單已成立", summary, next: "Kenny 會以電話或簡訊和您確認送達時間。" });
     return;
   }
